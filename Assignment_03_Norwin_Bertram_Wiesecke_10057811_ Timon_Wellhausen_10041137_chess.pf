@@ -14,6 +14,30 @@ pos-to-point: (pos :Str -> :Arr) {
     [number_from_letter number]
 } fun
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 test-pos-to-point: {
     "a1" pos-to-point [1 1] test=
     "A1" pos-to-point [1 1] test=
