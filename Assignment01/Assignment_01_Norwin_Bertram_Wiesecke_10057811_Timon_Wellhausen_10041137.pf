@@ -1,0 +1,91 @@
+﻿# Aufgabe 3a) 
+clear
+#
+4 8 *
+
+
+# Aufgabe 3b)
+clear
+#
+8 3 4 2 - *
+
+
+# Aufgabe 3c)
+clear
+#
+read-int x!
+x println
+
+read-flt y!
+y println
+
+"Hello" print
+"World" print
+
+"Hello" println
+"World" println
+
+
+# Aufgabe 3d)
+clear
+#
+false false or
+true false or
+false true or
+true true or
+
+false false and
+true false and
+false true and
+true true and
+
+
+# Aufgabe 3e)
+clear
+#
+1 2 3 4 + + +
+1 2 + 2 5 + +
+1 2 + 3 + 4 +
+3 4 + 1 2 + +
+4 3 2 1 + + +
+
+1 2 3 4 - - -
+1 2 - 2 5 - -
+1 2 - 3 - 4 -
+3 4 - 1 2 - -
+4 3 2 1 - - -
+
+
+# Aufgabe 3f) 
+clear
+#
+8 2 + -1 =
+
+
+# Aufgabe 3g) 
+clear
+# Kommentiert um Fehlermeldung und Programm-Terminierung zu vermeiden
+#1 /
+
+
+# Aufgabe 4a) 
+clear
+#
+read-int
+dup
+{
+    { 100 > } {"Too High" println} 
+    { 100 < } {"Too Low" println} 
+    {true} {"Match" println}
+} cond 
+
+
+# Aufgabe 4b) 
+clear
+#
+read-int test!
+{
+    { test 100 > } {"Too High" println 1 result!} 
+    { test 100 < } {"Too Low" println -1 result!} 
+    {true} {"Match" println 0 result!}
+} cond
