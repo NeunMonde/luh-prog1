@@ -1,0 +1,76 @@
+# a)
+# Create a world of size 12, place two "walls" of different size
+set-two-walls: (world_arr :Arr, wall_one_index :Int, wall_one_height :Int, wall_two_index :Int, wall_two_height :Int -> :Arr) {
+    world_arr
+    wall_one_index wall_one_height set
+    wall_two_index wall_two_height set
+} fun
+
+test-set-two-walls: {
+    12 0 array world!
+    world 0 2 11 5 set-two-walls [2 0 0 0 0 0 0 0 0 0 0 5] test=
+    world 3 5 6 8 set-two-walls [0 0 0 5 0 0 8 0 0 0 0 0] test=
+    world 7 1 9 4 set-two-walls [0 0 0 0 0 0 0 1 0 4 0 0] test=
+} fun
+
+test-set-two-walls
+
+# b)
+# Implement this function, which increases the size of the wall. The wall parameter denotes, which of the two walls will be changed
+increase-height: (world_arr :Arr, wall :Int, increase_amount :Int -> :Arr) {
+    0 0 array pos!
+
+    world_arr{
+        i! v!
+        v 0 != {pos i append pos!}if
+    } fori
+    world_arr
+    pos wall get
+    world_arr
+    pos wall get
+    get increase_amount +
+    set
+}fun
+
+test-increase-height: {
+    12 0 array world!
+    world 0 1 11 1 set-two-walls 1 5 increase-height [1 0 0 0 0 0 0 0 0 0 0 6] test=
+    world 2 1 9 7 set-two-walls 0 2 increase-height [0 0 3 0 0 0 0 0 0 7 0 0] test=
+    world 5 5 7 3 set-two-walls 1 7 increase-height [0 0 0 0 0 5 0 10 0 0 0 0] test=
+    # Edge case: More than 2 walls not covered. Exception might be needed.
+}fun
+
+test-increase-height
+
+# c)
+# Calculate amount of water that can be between the walls without spilling over the walls
+calculate-water: (world_arr :Arr -> :Int) {
+    0 0 array pos!
+    0 0 array height!
+
+    world_arr{
+        i! v!
+        v 0 != {
+            pos i append pos!
+            height v append height!
+        }if
+    } fori
+
+    pos .1 pos .0 - 1 -
+
+
+    height .0 height .1 min
+
+    *
+} fun
+
+test-calculate-water: {
+    12 0 array world!
+    world 0 1 11 1 set-two-walls calculate-water 10 test=
+    world 3 5 6 8 set-two-walls calculate-water 10 test=
+    world 7 1 9 4 set-two-walls calculate-water 1 test=
+    world 1 4 8 3 set-two-walls calculate-water 18 test=
+}fun
+
+test-calculate-water
+test-stats
