@@ -1,0 +1,18 @@
+#<
+In einem Programm sollen verschiedene Formen von geometrischen Körpern, nämlich
+Zylinder, Kugel und Quader, repräsentiert werden. Entwickeln Sie eine Funktion,
+die diese geometrischen Körper vararbeiten kann (Parametertyp: Shape) und das
+zugehörige Volumen berechnet.
+>#
+
+# Verwenden Sie das "recipe for variant data"
+
+Shape: {
+    # todo: define variants
+} datadef
+
+# todo: implementieren Sie die Funktion zur Volumenberechnung
+
+# todo: implementieren Sie die Testfunktion
+
+# todo: rufen Sie die Testfunktion auf

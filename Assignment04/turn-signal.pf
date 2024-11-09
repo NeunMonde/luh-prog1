@@ -1,0 +1,119 @@
+#<
+Design a controller for turn signals. There are is a left and a right turn
+signal. The left signal is activated and deactivated by the "l" key. The right
+signal is activated and deactivated by the "r" key. An active signal light
+should blink at a rate of 1 Hz (500 ms on, 500 ms off). At most one signal may
+be active at any one time.
+
+There are two main functions to implement. The key-press function is called
+whenever a key is pressed. The tick function is called at a rate of 60 Hz and
+asks for the next state given the current state. Follow a design recipe and
+think about tests cases first (key-press-test, tick-test). You also need to
+set the initial state and implement the helper functions left-light-on? and 
+right-light-on?.
+>#
+
+# chosen design recipe:
+# todo: ...
+
+# enumeration of traffic light states:
+# todo: enumerate states and write data definition
+
+# todo: set initial state
+:todo initial-state!
+
+# Called on key press. Computes the next state depending on state, key, and time.
+key-press: (state :Obj, key :Str, now :Int -> :Obj) {
+    # todo: process key input, for example "l" and "r"
+    state 
+} fun
+
+# Called on key press. Inserts timestamp and calls key-press.
+key-press-without-time: {
+    time-millis key-press
+} !
+
+key-press-test: {
+    # todo: add examples and expected results
+    # ... key-press ... test=
+    # ... key-press ... test=
+    # ... key-press ... test=
+    test-stats
+} fun
+
+key-press-test
+
+# Called at 60 Hz. Computes the next state depending on the current state and time.
+tick: (state :Obj, now :Int -> :Obj) {
+    state # todo: compute the next state
+} fun
+
+# Called at 60 Hz. Inserts timestamp and calls tick.
+tick-without-time: {
+    time-millis tick
+} !
+
+tick-test: {
+    # todo: add examples and expected results
+    # ... tick ... test=
+    # ... tick ... test=
+    # ... tick ... test=
+    test-stats
+} fun
+
+tick-test
+
+# Returns true iff the left light is currently on (emitting light).
+left-light-on?: (state :Obj -> :Bool) {
+    false # todo: implement
+} fun
+
+# Returns true iff the right light is currently on (emitting light).
+right-light-on?: (state :Obj -> :Bool) {
+    false # todo: implement
+} fun
+
+# Graphics output code below this point.
+# Don't change code below this point, except for calling animate 
+# at the very bottom (when your tests work).
+# The code calls key-press-without-time, tick-without-time, 
+# initial-state, left-light-on?, and right-light-on?.
+
+# A colored light.
+light: (color :Str -> :Arr) {
+    [circle: 30 color [pen: "black" 2.0]]
+} fun
+
+[rectangle: 300 100 "white"] BACKGROUND!
+[rectangle: 50 1 "white"] SPACE!
+
+# Produce an image for the current state.
+on-draw: (state :Obj -> :Arr) { 
+    state left-light-on? { "yellow"  } { "black" } if left!
+    state right-light-on? { "yellow"  } { "black" } if right!
+    [overlay: 
+        [[beside: [left light SPACE right light]] 
+         BACKGROUND]]
+} fun
+
+# The animation code.
+animate: {
+    "Turn Signal" 300 100 initial-state [ # window title, width, and height, initial state
+        on-draw: (state) { # called when a redraw is necessary
+             state on-draw 
+        } lam
+        on-tick: (state) { # called 60 times per second
+            state tick-without-time
+        } lam 
+        on-key-press: (state key) { # called when a key has been pressed down
+            state key key-press-without-time
+        } lam 
+    ] show
+} fun
+
+# Animate only if you are sure that your code works. Graphics output is not
+# very robust yet. An error might mean that you have to close the IDE and
+# start the IDE again. Always save (Ctrl+S) your work!
+
+# todo: remove comment to animate
+#animate
