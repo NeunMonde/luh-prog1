@@ -65,12 +65,47 @@ valid-position?: (x :Int, y :Int -> :Bool) {
 position-to-index: (x :Int, y :Int -> :Int) {
     x y valid-position? not { "invalid position" err } if
     # a) implement
-    0
+    {
+        {y 0 =}{
+            {
+                {x 0 =}{0}
+                {x 1 =}{1}
+                {x 2 =}{2}
+                {x 3 =}{3}
+            }cond}
+        {y 1 =}{
+            {
+                {x 0 =}{4}
+                {x 1 =}{5}
+                {x 2 =}{6}
+                {x 3 =}{7}
+            }cond}
+        {y 2 =}{
+            {
+                {x 0 =}{8}
+                {x 1 =}{9}
+                {x 2 =}{10}
+                {x 3 =}{11}
+            }cond}
+        {y 3 =}{
+            {
+                {x 0 =}{12}
+                {x 1 =}{13}
+                {x 2 =}{14}
+                {x 3 =}{15}
+            }cond}
+    }cond
 } fun
 
 # Swap tile at position (x1, y1) with tile at position (x2, y2).
 swap-tiles: (tiles :Arr, x1 :Int, y1 :Int, x2 :Int, y2 :Int -> :Arr) {
     # b) implement
+    x1 y1 position-to-index I1!
+    x2 y2 position-to-index I2!
+    tiles .I1 T1!
+    tiles .I2 T2!
+    tiles I1 T2 set tiles!
+    tiles I2 T1 set tiles!
     tiles
 } fun
 
@@ -110,7 +145,13 @@ shift-tiles: (tiles :Arr, value :Int -> :Arr) {
 # The number of tiles that are at the right position.
 count-correct: (tiles :Arr -> :Int) {
     # c) implement
-    0 
+    0 Count!
+    tiles
+    {
+        i!
+        i ={Count 1 + Count!}if
+    }fori
+    Count
 } fun
 
 # Graphical representation of tile at index.
@@ -162,13 +203,32 @@ draw: (state :Arr -> :Arr) {
             ]]
         } for
         # e) implement: show number of correct positions
+        [:square 20 "red"]
     ]]
 } fun
 
 # Next state given the current state and a key press.
 key-press: (state :Arr, key :Str -> :Arr)  { 
     # d) implement
-    state
+    state :tiles get tiles!
+    tiles 15 value-to-index Index!
+    {
+        {key "ArrowRight" =}{Index 1 + Index!}
+        {key "ArrowLeft" =}{Index 1 - Index!}
+        {key "ArrowUp" =}{Index 4 - Index!}
+        {key "ArrowDown" =}{Index 4 + Index!}
+    }cond
+    Index 0 >= Index 15 <= and{
+        tiles .Index Value!
+        "the tile can be shifted" println
+        tiles Value shift-tiles tiles!
+        tiles count-correct print " correct positions" println
+        state :tiles tiles set
+    }
+    {
+        "the tile cannot be shifted" println
+        state #< unchanged ># 
+    }if
 } fun
 
 # The tile values are the integers 0..ROWS*COLUMNS-1. 
