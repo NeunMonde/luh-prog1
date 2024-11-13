@@ -7,9 +7,9 @@ zugehörige Volumen berechnet.
 
 # Verwenden Sie das "recipe for variant data"
 Shape: {
-    Zylinder: (r Int:, h Int: -> Num:)
-    Kugel: (r Int: -> Num:)
-    Quader: (l Int:, w Int:, h Int: -> Num:)
+    Zylinder: (r :Int, h :Int -> :Num)
+    Kugel: (r :Int -> :Num)
+    Quader: (l :Int, w :Int, h :Int -> :Num)
 } datadef
 
 # todo: implementieren Sie die Funktion zur Volumenberechnung
