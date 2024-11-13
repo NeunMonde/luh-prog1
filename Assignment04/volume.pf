@@ -7,17 +7,17 @@ zugehörige Volumen berechnet.
 
 # Verwenden Sie das "recipe for variant data"
 Shape: {
-    Zyllinder: (r Int:, h Int: -> Num:)
-    Kugel: (r Int: -> Num:)
-    Quader: (l Int:, w Int:, h Int: -> Num:)
+    Zylinder: (r :Int, h :Int -> :Num)
+    Kugel: (r :Int -> :Num)
+    Quader: (l :Int, w :Int, h :Int -> :Num)
 } datadef
 
 # todo: implementieren Sie die Funktion zur Volumenberechnung
 Volume: (shape :Shape -> :Num){
-    {shape zyllinder?}{
+    {shape zylinder?}{
         PI
-        shape zyllinder-r dup * *
-        shape zyllinder-h *
+        shape zylinder-r dup * *
+        shape zylinder-h *
     }
     {shape kugel?}{
         4 3 / PI * 
@@ -32,8 +32,8 @@ Volume: (shape :Shape -> :Num){
 
 # todo: implementieren Sie die Testfunktion
 Volume-test: {
-    2 2 zyllinder Volume round 25 test=
-    3 3 zyllinder Volume round 85 test=
+    2 2 zylinder Volume round 25 test=
+    3 3 zylinder Volume round 85 test=
     2 kugel Volume round 34 test=
     3 kugel Volume round 113 test=
     2 2 2 quader Volume 8 test=
