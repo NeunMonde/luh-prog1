@@ -15,17 +15,59 @@ right-light-on?.
 
 # chosen design recipe:
 # todo: ...
+Blinker: {
+    Active: (side :Str, powered :Bool, LastTimestamp :Int)
+    Inactive: ()
+} datadef
+#"Left" activeblinker time-millis lasttimestamp
 
-# enumeration of traffic light states:
-# todo: enumerate states and write data definition
 
 # todo: set initial state
-:todo initial-state!
+"Right" false time-millis active initial-state!
+
 
 # Called on key press. Computes the next state depending on state, key, and time.
 key-press: (state :Obj, key :Str, now :Int -> :Obj) {
-    # todo: process key input, for example "l" and "r"
-    state 
+    
+
+state active?{
+    "Active" println
+    {
+        {key "r" = state active-side "Right" = and}{
+            "Right off" println
+            inactive
+        }
+
+        {key "r" = state active-side "Left" = and}{
+            "Right on" println
+            state "Right" active-side-set
+        }
+
+        {key "l" = state active-side "Left" = and}{
+            "Left off" println
+            inactive
+        }
+
+        {key "l" = state active-side "Right" = and}{
+            "Left on" println
+            state "Left" active-side-set
+        }
+    } cond
+}{
+    "Inactive" println
+    {
+        {key "r" =}{
+            "Right on" println
+            "Right" true time-millis active
+        }
+
+        {key "l" =}{
+            "Left on" println
+            "Left" true time-millis active
+        }
+    }cond
+}if
+
 } fun
 
 # Called on key press. Inserts timestamp and calls key-press.
@@ -44,8 +86,30 @@ key-press-test: {
 key-press-test
 
 # Called at 60 Hz. Computes the next state depending on the current state and time.
-tick: (state :Obj, now :Int -> :Obj) {
-    state # todo: compute the next state
+tick: (state :Obj, now :Int -> :Obj) { #|| Takes state and time-millis from tick-without-time and returns the next state.
+    {
+        {state active?}{
+            state active-LastTimestamp 500 + now <= {
+                {
+                    {state active-powered true =}{state false active-powered-set time-millis active-LastTimestamp-set}
+                    {state active-powered false =}{state true active-powered-set time-millis active-LastTimestamp-set}
+                }cond
+            }{
+                state
+            } if
+        }
+
+        {state inactive?}{
+            state
+        }
+    }cond
+
+
+
+
+     # todo: compute the next state
+    
+
 } fun
 
 # Called at 60 Hz. Inserts timestamp and calls tick.
@@ -65,12 +129,26 @@ tick-test
 
 # Returns true iff the left light is currently on (emitting light).
 left-light-on?: (state :Obj -> :Bool) {
-    false # todo: implement
+    state active?
+    {
+        state active-powered true = 
+        state active-side "Left" =
+        and
+    }{
+        false
+    }if
 } fun
 
 # Returns true iff the right light is currently on (emitting light).
 right-light-on?: (state :Obj -> :Bool) {
-    false # todo: implement
+    state active?
+    {
+        state active-powered true = 
+        state active-side "Right" =
+        and
+    }{
+        false
+    }if # todo: implement
 } fun
 
 # Graphics output code below this point.
@@ -99,8 +177,8 @@ on-draw: (state :Obj -> :Arr) {
 # The animation code.
 animate: {
     "Turn Signal" 300 100 initial-state [ # window title, width, and height, initial state
-        on-draw: (state) { # called when a redraw is necessary
-             state on-draw 
+        on-draw: (state) { # called when a redraw is necessary || IF LEFT LIGHT ON, THEN YELLOW, ELSE BLACK; IF RIGHT LIGHT ON, THEN YELLOW, ELSE BLACK
+            state on-draw 
         } lam
         on-tick: (state) { # called 60 times per second
             state tick-without-time
@@ -116,4 +194,4 @@ animate: {
 # start the IDE again. Always save (Ctrl+S) your work!
 
 # todo: remove comment to animate
-#animate
+animate
