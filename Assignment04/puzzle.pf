@@ -1,44 +1,265 @@
-﻿#<
-In einem Programm sollen verschiedene Formen von geometrischen Körpern, nämlich
-Zylinder, Kugel und Quader, repräsentiert werden. Entwickeln Sie eine Funktion,
-die diese geometrischen Körper vararbeiten kann (Parametertyp: Shape) und das
-zugehörige Volumen berechnet.
+﻿#< 
+The goal of the puzzle game is to reorder the tiles. There is one 
+empty tile, into which another tile may be moved. When the puzzle
+is solved, the empty tile will then be located in the lower right 
+corner when the board.
 >#
 
-# Verwenden Sie das "recipe for variant data"
-Shape: {
-    Zyllinder: (r Int:, h Int: -> Num:)
-    Kugel: (r Int: -> Num:)
-    Quader: (l Int:, w Int:, h Int: -> Num:)
-} datadef
+4 ROWS!
+4 COLUMNS!
+100 TILE-SIZE!
+COLUMNS TILE-SIZE * WIDTH!
+ROWS TILE-SIZE *  40 + HEIGHT!
+15 EMPTY-VALUE!
 
-# todo: implementieren Sie die Funktion zur Volumenberechnung
-Volume: (shape :Shape -> :Num){
-    {shape zyllinder?}{
-        PI
-        shape zyllinder-r dup * *
-        shape zyllinder-h *
-    }
-    {shape kugel?}{
-        4 3 / PI * 
-        shape kugel-r dup dup * * *
-    }
-    {shape quader?}{
-        shape quader-l
-        shape quader-w *
-        shape quader-h *
-    }
-}cond-fun
+#<
+The tiles are stored in a one-dimensional integer array of length 
+ROWS * COLUMNS. Array index 0 corresponds to the top-left board 
+position (x, y) = (0, 0), array index 1 corresponds to the board 
+position right next to it at (1, 0), and so on. A tile has a current 
+position, a corresponding current array index, and a constant value.
 
-# todo: implementieren Sie die Testfunktion
-Volume-test: {
-    2 2 zyllinder Volume round 25 test=
-    3 3 zyllinder Volume round 85 test=
-    2 kugel Volume round 34 test=
-    3 kugel Volume round 113 test=
-    2 2 2 quader Volume 8 test=
-    3 3 3 quader Volume 27 test=
-}fun
+The constant value of a tile corresponds to the index it would have 
+when it was located at the correct position. The tile that belongs 
+to position (0, 0) has value 0, the tile that belongs to position 
+(1, 0) has value 1, and so on.
 
-# todo: rufen Sie die Testfunktion auf
-Volume-test
+For a 4x4 board positions and values look like this, when solved:
+(0,0): tile  0, (1,0): tile  1, (2,0): tile  2, (3,0): tile  3
+(0,1): tile  4, (1,1): tile  5, (2,1): tile  6, (3,1): tile  7
+(0,2): tile  8, (1,2): tile  9, (2,2): tile 10, (3,2): tile 11
+(0,3): tile 12, (1,3): tile 13, (2,3): tile 14, (3,3): tile 15
+
+The tile with value 15 is the empty tile.
+>#
+
+# (x, y)-position of the given index. Left-top is index 0 and position (0, 0).
+# Pushes y first, then x, so that x! y! will collect the results.
+index-to-position: (index :Int -> :Int, :Int) {
+    index 0 <  index ROWS COLUMNS * >=  or { "invalid index" err } if
+    index COLUMNS div # y, row
+    index COLUMNS mod # x, column
+} fun
+
+# Current index of the tile with the given value in the tiles array.
+# Returns -1 f value is not found in tiles.
+value-to-index: (tiles :Arr, value :Int -> :Int) {
+    -1
+    tiles {swap value = {swap pop break} {pop} if} fori
+} fun
+
+# Current (x,y)-position of the tile with the given value in the tiles array.
+# Pushes y first, then x, so that x! y! will collect the results.
+value-to-position: (tiles :Arr, value :Int -> :Int, :Int) {
+    tiles value value-to-index i!
+    i -1 = { "value not found" err } if
+    i index-to-position
+} fun
+
+# Is (x, y) a valid position?
+valid-position?: (x :Int, y :Int -> :Bool) {
+    { {x 0 >=} {x COLUMNS < } {y 0 >=} {y ROWS < } } and 
+} fun
+
+# Array index corresponding to position (x, y).
+position-to-index: (x :Int, y :Int -> :Int) {
+    x y valid-position? not { "invalid position" err } if
+    # a) implement
+    {
+        {y 0 =}{
+            {
+                {x 0 =}{0}
+                {x 1 =}{1}
+                {x 2 =}{2}
+                {x 3 =}{3}
+            }cond}
+        {y 1 =}{
+            {
+                {x 0 =}{4}
+                {x 1 =}{5}
+                {x 2 =}{6}
+                {x 3 =}{7}
+            }cond}
+        {y 2 =}{
+            {
+                {x 0 =}{8}
+                {x 1 =}{9}
+                {x 2 =}{10}
+                {x 3 =}{11}
+            }cond}
+        {y 3 =}{
+            {
+                {x 0 =}{12}
+                {x 1 =}{13}
+                {x 2 =}{14}
+                {x 3 =}{15}
+            }cond}
+    }cond
+} fun
+
+# Swap tile at position (x1, y1) with tile at position (x2, y2).
+swap-tiles: (tiles :Arr, x1 :Int, y1 :Int, x2 :Int, y2 :Int -> :Arr) {
+    # b) implement
+    x1 y1 position-to-index I1!
+    x2 y2 position-to-index I2!
+    tiles .I1 T1!
+    tiles .I2 T2!
+    tiles I1 T2 set tiles!
+    tiles I2 T1 set tiles!
+    tiles
+} fun
+
+# Can the tile with the given value be shifted?
+can-shift-tile?: (tiles :Arr, value :Int -> :Bool) {
+    tiles EMPTY-VALUE value-to-position x-empty! y-empty!
+    tiles value value-to-position x-value! y-value!
+    value EMPTY-VALUE !=        # cannot shift empty tile
+    x-empty x-value =           # same column?
+    y-empty y-value = or and    # same row?
+} fun
+
+# If possible, shift tiles towards the empty tile starting from the given tile. 
+# Can shift multiple tiles in a row or column at once. 
+shift-tiles: (tiles :Arr, value :Int -> :Arr) {
+    tiles value can-shift-tile? {
+        tiles EMPTY-VALUE value-to-position ex! ey! # empty tile
+        tiles value value-to-position vx! vy! # initial tile to be shifted
+        #"ex = %d, ey = %d, vx = %d, vy = %d\n" [ex ey vx vy] printf
+        # direction vector and distance
+        vx ex - sign dx!
+        vy ey - sign dy!
+        vx ex - abs  vy ey - abs  max  dist!
+        #"dx = %d, dy = %d, dist = %d\n" [dx dy dist] printf
+        tiles 0 dist { pop
+            # swap empty tile and its neighbor
+            ex, ey, ex dx +, ey dy + swap-tiles
+            # the empty tile has moved
+            ex dx + ex!
+            ey dy + ey!
+        } for
+    } {
+        tiles # unchanged
+    } if
+} fun
+
+# The number of tiles that are at the right position.
+count-correct: (tiles :Arr -> :Int) {
+    # c) implement
+    0 Count!
+    tiles
+    {
+        i!
+        i ={Count 1 + Count!}if
+    }fori
+    Count
+} fun
+
+# Graphical representation of tile at index.
+make-tile: (value :Int -> :Arr) {
+    value EMPTY-VALUE = {
+        bgcol: "lightgray" !
+        tile: [[square: TILE-SIZE bgcol [pen: "gray" 3]]] !
+    } {
+        bgcol: "floralwhite" !
+        value index-to-position 1 + x! 1 + y!
+        tile: [[bitmap: "puzzle/Wien_0" y str + "_0" + x str + ".png" +]
+               [square: TILE-SIZE bgcol [pen: "gray" 3]]] !
+
+    } if
+    [overlay: tile
+        # Next state given the current state and a mouse click.
+        on-mouse-press: (state :Arr, x :Num, y :Num -> :Arr) { 
+            state :tiles get tiles!
+            tiles value value-to-index index! # get current index of this tile
+            "clicked on tile %s at index %d\n" [value, index] printf
+            tiles value can-shift-tile? {
+                "the tile can be shifted" println
+                tiles value shift-tiles tiles!
+                tiles count-correct print " correct positions" println
+                state :tiles tiles set
+            } {
+                "the tile cannot be shifted" println
+                state # unchanged
+            } if
+        } lam
+    ]
+} fun
+
+# Graphical representation of the current state.
+draw: (state :Arr -> :Arr) { 
+    state :tiles get tiles!
+    state :images get images!
+    state :show-values get show-values!
+    state :show-numbers get show-numbers!
+    0 i!
+    [above: [
+        0 ROWS { pop
+            [beside: [
+                0 COLUMNS { pop
+                    tiles i get value!
+                    # f) implement: show value
+                    show-numbers 0 = {
+                        images value get
+                    }
+                    {
+                        value str Positions!
+                        [:overlay[[text: Positions [font: "Arial" 30] "red"] images value get]]
+                    }if
+                    i 1 + i!
+                } for
+            ]]
+        } for
+        # e) implement: show number of correct positions
+        tiles count-correct str " correct" + Number!
+        [text: Number [font: "Arial" 30] "black"]
+    ]]
+} fun
+
+# Next state given the current state and a key press.
+key-press: (state :Arr, key :Str, -> :Arr)  { 
+    # d) implement
+    state :tiles get tiles!
+    tiles 15 value-to-index Index!
+    state :show-numbers get show-numbers!
+    {
+        {key "ArrowRight" =}{Index 1 + Index!}
+        {key "ArrowLeft" =}{Index 1 - Index!}
+        {key "ArrowUp" =}{Index 4 - Index!}
+        {key "ArrowDown" =}{Index 4 + Index!}
+        {key "w" =}{show-numbers 0 = {1 show-numbers!}{0 show-numbers!}if}
+    }cond
+    Index 0 >= Index 15 <= and{
+        tiles .Index Value!
+        "the tile can be shifted" println
+        tiles Value shift-tiles tiles!
+        tiles count-correct print " correct positions" println
+        state :tiles tiles set state!
+        state :show-numbers show-numbers set
+    }
+    {
+        "the tile cannot be shifted" println
+        state #< unchanged ># 
+    }if
+    show-numbers str println
+} fun
+
+# The tile values are the integers 0..ROWS*COLUMNS-1. 
+# The elements are stored row-by-row from top to bottom.
+# The images array contains the precomputed tile images.
+initial-state: [
+    tiles: [0 ROWS COLUMNS * {} for] shuffle
+    images: [0 ROWS COLUMNS *  {make-tile} for]
+    show-values: false
+    show-numbers: 0
+] !
+
+tests: {
+    initial-state :tiles get tiles!
+    tiles { tiles swap can-shift-tile? println } for
+} fun
+#tests
+
+"Puzzle" WIDTH HEIGHT initial-state [ 
+    on-draw: {draw } lam
+    on-key-press: {key-press } lam
+] show
