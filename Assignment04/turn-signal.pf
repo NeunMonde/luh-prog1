@@ -84,9 +84,7 @@ key-press-test: {
     "Right" false time-millis active "l" time-millis key-press "Left" false time-millis active test-tolerance test~=
     "Left" false time-millis active "l" time-millis key-press inactive test-tolerance test~=
     inactive "r" time-millis key-press "Right" true time-millis active test-tolerance test~=
-    inactive "l" time-millis key-press "Left" true time-millis active test-tolerance test~=
-    
-    test-stats
+    inactive "l" time-millis key-press "Left" true time-millis active test-tolerance test~=   
 } fun
 
 key-press-test
@@ -126,8 +124,6 @@ tick-test: {
     "Left" true time-millis active time-millis tick "Left" true time-millis active test-tolerance test~=
     "Left" false time-millis active time-millis tick "Left" false time-millis active test-tolerance test~=
     inactive time-millis tick inactive test=
-
-    test-stats
 } fun
 
 tick-test
@@ -154,6 +150,7 @@ right-light-on?: (state :Obj -> :Bool) {
     } if
 } fun
 
+test-stats
 # Graphics output code below this point.
 # Don't change code below this point, except for calling animate 
 # at the very bottom (when your tests work).
