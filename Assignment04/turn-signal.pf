@@ -14,59 +14,54 @@ right-light-on?.
 >#
 
 # chosen design recipe:
-# todo: ...
 Blinker: {
     Active: (side :Str, powered :Bool, LastTimestamp :Int)
     Inactive: ()
 } datadef
-#"Left" activeblinker time-millis lasttimestamp
 
+5 test-tolerance! # Added due to test errors caused by processing time
 
-# todo: set initial state
-"Right" false time-millis active initial-state!
+inactive initial-state!
 
 
 # Called on key press. Computes the next state depending on state, key, and time.
 key-press: (state :Obj, key :Str, now :Int -> :Obj) {
-    
 
-state active?{
-    "Active" println
-    {
-        {key "r" = state active-side "Right" = and}{
-            "Right off" println
-            inactive
-        }
+key "r" != key "l" != and {
+    state
+    }{
+        state active?{
+        {
+            {key "r" = state active-side "Right" = and}{
+                inactive
+            }
 
-        {key "r" = state active-side "Left" = and}{
-            "Right on" println
-            state "Right" active-side-set
-        }
+            {key "r" = state active-side "Left" = and}{
+                state "Right" active-side-set
+            }
 
-        {key "l" = state active-side "Left" = and}{
-            "Left off" println
-            inactive
-        }
+            {key "l" = state active-side "Left" = and}{
+                inactive
+            }
 
-        {key "l" = state active-side "Right" = and}{
-            "Left on" println
-            state "Left" active-side-set
-        }
-    } cond
-}{
-    "Inactive" println
-    {
-        {key "r" =}{
-            "Right on" println
-            "Right" true time-millis active
-        }
+            {key "l" = state active-side "Right" = and}{
+                state "Left" active-side-set
+            }
+        } cond
+    }{
+        {
+            {key "r" =}{
+                "Right" true time-millis active
+            }
 
-        {key "l" =}{
-            "Left on" println
-            "Left" true time-millis active
-        }
-    }cond
-}if
+            {key "l" =}{
+                "Left" true time-millis active
+            }
+        }cond
+    }if
+} if
+
+
 
 } fun
 
@@ -76,17 +71,25 @@ key-press-without-time: {
 } !
 
 key-press-test: {
-    # todo: add examples and expected results
-    # ... key-press ... test=
-    # ... key-press ... test=
-    # ... key-press ... test=
+    
+    "Right" true time-millis active "r" time-millis key-press inactive test-tolerance test~=
+    "Left" true time-millis active "r" time-millis key-press "Right" true time-millis active test-tolerance test~=
+    "Right" true time-millis active "l" time-millis key-press "Left" true time-millis active test-tolerance test~=
+    "Left" true time-millis active "l" time-millis key-press inactive test-tolerance test~=
+    "Right" false time-millis active "r" time-millis key-press inactive test-tolerance test~=
+    "Left" false time-millis active "r" time-millis key-press "Right" false time-millis active test-tolerance test~=
+    "Right" false time-millis active "l" time-millis key-press "Left" false time-millis active test-tolerance test~=
+    "Left" false time-millis active "l" time-millis key-press inactive test-tolerance test~=
+    inactive "r" time-millis key-press "Right" true time-millis active test-tolerance test~=
+    inactive "l" time-millis key-press "Left" true time-millis active test-tolerance test~=
+    
     test-stats
 } fun
 
 key-press-test
 
 # Called at 60 Hz. Computes the next state depending on the current state and time.
-tick: (state :Obj, now :Int -> :Obj) { #|| Takes state and time-millis from tick-without-time and returns the next state.
+tick: (state :Obj, now :Int -> :Obj) { 
     {
         {state active?}{
             state active-LastTimestamp 500 + now <= {
@@ -103,13 +106,6 @@ tick: (state :Obj, now :Int -> :Obj) { #|| Takes state and time-millis from tick
             state
         }
     }cond
-
-
-
-
-     # todo: compute the next state
-    
-
 } fun
 
 # Called at 60 Hz. Inserts timestamp and calls tick.
@@ -118,10 +114,16 @@ tick-without-time: {
 } !
 
 tick-test: {
-    # todo: add examples and expected results
-    # ... tick ... test=
-    # ... tick ... test=
-    # ... tick ... test=
+    "Right" true 0 active time-millis tick "Right" false time-millis active test-tolerance test~=
+    "Right" false 0 active time-millis tick "Right" true time-millis active test-tolerance test~=
+    "Left" true 0 active time-millis tick "Left" false time-millis active test-tolerance test~=
+    "Left" false 0 active time-millis tick "Left" true time-millis active test-tolerance test~=
+    "Right" true time-millis active time-millis tick "Right" true time-millis active test-tolerance test~=
+    "Right" false time-millis active time-millis tick "Right" false time-millis active test-tolerance test~=
+    "Left" true time-millis active time-millis tick "Left" true time-millis active test-tolerance test~=
+    "Left" false time-millis active time-millis tick "Left" false time-millis active test-tolerance test~=
+    inactive time-millis tick inactive test=
+
     test-stats
 } fun
 
@@ -148,7 +150,7 @@ right-light-on?: (state :Obj -> :Bool) {
         and
     }{
         false
-    }if # todo: implement
+    }if
 } fun
 
 # Graphics output code below this point.
