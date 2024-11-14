@@ -23,14 +23,12 @@ Blinker: {
 
 inactive initial-state!
 
-
 # Called on key press. Computes the next state depending on state, key, and time.
 key-press: (state :Obj, key :Str, now :Int -> :Obj) {
-
 key "r" != key "l" != and {
     state
-    }{
-        state active?{
+}{
+    state active?{
         {
             {key "r" = state active-side "Right" = and}{
                 inactive
@@ -57,11 +55,9 @@ key "r" != key "l" != and {
             {key "l" =}{
                 "Left" true time-millis active
             }
-        }cond
-    }if
+        } cond
+    } if
 } if
-
-
 
 } fun
 
@@ -71,7 +67,6 @@ key-press-without-time: {
 } !
 
 key-press-test: {
-    
     "Right" true time-millis active "r" time-millis key-press inactive test-tolerance test~=
     "Left" true time-millis active "r" time-millis key-press "Right" true time-millis active test-tolerance test~=
     "Right" true time-millis active "l" time-millis key-press "Left" true time-millis active test-tolerance test~=
@@ -96,7 +91,7 @@ tick: (state :Obj, now :Int -> :Obj) {
                 {
                     {state active-powered true =}{state false active-powered-set time-millis active-LastTimestamp-set}
                     {state active-powered false =}{state true active-powered-set time-millis active-LastTimestamp-set}
-                }cond
+                } cond
             }{
                 state
             } if
@@ -105,7 +100,7 @@ tick: (state :Obj, now :Int -> :Obj) {
         {state inactive?}{
             state
         }
-    }cond
+    } cond
 } fun
 
 # Called at 60 Hz. Inserts timestamp and calls tick.
@@ -131,26 +126,24 @@ tick-test
 
 # Returns true iff the left light is currently on (emitting light).
 left-light-on?: (state :Obj -> :Bool) {
-    state active?
-    {
+    state active?{
         state active-powered true = 
         state active-side "Left" =
         and
     }{
         false
-    }if
+    } if
 } fun
 
 # Returns true iff the right light is currently on (emitting light).
 right-light-on?: (state :Obj -> :Bool) {
-    state active?
-    {
+    state active?{
         state active-powered true = 
         state active-side "Right" =
         and
     }{
         false
-    }if
+    } if
 } fun
 
 # Graphics output code below this point.
@@ -195,5 +188,4 @@ animate: {
 # very robust yet. An error might mean that you have to close the IDE and
 # start the IDE again. Always save (Ctrl+S) your work!
 
-# todo: remove comment to animate
 animate
