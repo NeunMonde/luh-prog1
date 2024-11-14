@@ -1,9 +1,9 @@
 ﻿# a)
 # Create a world of size 12, place two "walls" of different size
 set-two-walls: (world_arr :Arr, wall_one_index :Int, wall_one_height :Int, wall_two_index :Int, wall_two_height :Int -> :Arr) {
-    world_arr wall_one_index wall_one_height set world_arr!
-    world_arr wall_two_index wall_two_height set world_arr!
     world_arr
+    wall_one_index wall_one_height set
+    wall_two_index wall_two_height set
 } fun
 
 test-set-two-walls: {
@@ -17,30 +17,19 @@ test-set-two-walls
 
 # b)
 # Implement this function, which increases the size of the wall. The wall parameter denotes, which of the two walls will be changed
-
-find-left-wall: (world_arr :Arr) {
-    nil
-    world_arr {i! x! x 0 > {pop i break} if} fori
-} fun
-
-find-right-wall: (world_arr :Arr) {
-    world_arr reverse find-left-wall i!
-    i nil? not {
-        world_arr length 1 - i -
-    } if
-} fun
-
 increase-height: (world_arr :Arr, wall :Int, increase_amount :Int -> :Arr) {
-    world_arr find-left-wall pos1!
-    world_arr find-right-wall pos2!
-    wall 0 = {
-        world_arr pos1 get increase_amount + new_height!
-        world_arr pos1 new_height set world_arr!
-    }{
-        world_arr pos2 get increase_amount + new_height!
-        world_arr pos2 new_height set world_arr!
-    }if
+    0 0 array pos!
+
+    world_arr{
+        i! v!
+        v 0 != {pos i append pos!}if
+    } fori
     world_arr
+    pos wall get
+    world_arr
+    pos wall get
+    get increase_amount +
+    set
 }fun
 
 test-increase-height: {
@@ -48,6 +37,7 @@ test-increase-height: {
     world 0 1 11 1 set-two-walls 1 5 increase-height [1 0 0 0 0 0 0 0 0 0 0 6] test=
     world 2 1 9 7 set-two-walls 0 2 increase-height [0 0 3 0 0 0 0 0 0 7 0 0] test=
     world 5 5 7 3 set-two-walls 1 7 increase-height [0 0 0 0 0 5 0 10 0 0 0 0] test=
+    # Edge case: More than 2 walls not covered. Exception might be needed.
 }fun
 
 test-increase-height
@@ -55,11 +45,23 @@ test-increase-height
 # c)
 # Calculate amount of water that can be between the walls without spilling over the walls
 calculate-water: (world_arr :Arr -> :Int) {
-    world_arr find-left-wall pos1!
-    world_arr find-right-wall pos2!
-    world_arr pos1 get wand1!
-    world_arr pos2 get wand2!
-    wand1 wand2 min pos2 pos1 - 1 - *
+    0 0 array pos!
+    0 0 array height!
+
+    world_arr{
+        i! v!
+        v 0 != {
+            pos i append pos!
+            height v append height!
+        }if
+    } fori
+
+    pos .1 pos .0 - 1 -
+
+
+    height .0 height .1 min
+
+    *
 } fun
 
 test-calculate-water: {
