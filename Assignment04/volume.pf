@@ -12,7 +12,6 @@ Shape: {
     Quader: (l :Int, w :Int, h :Int -> :Num)
 } datadef
 
-# todo: implementieren Sie die Funktion zur Volumenberechnung
 Volume: (shape :Shape -> :Num){
     {shape zylinder?}{
         PI
@@ -30,7 +29,6 @@ Volume: (shape :Shape -> :Num){
     }
 }cond-fun
 
-# todo: implementieren Sie die Testfunktion
 Volume-test: {
     2 2 zylinder Volume round 25 test=
     3 3 zylinder Volume round 85 test=
@@ -40,5 +38,5 @@ Volume-test: {
     3 3 3 quader Volume 27 test=
 }fun
 
-# todo: rufen Sie die Testfunktion auf
 Volume-test
+test-stats
