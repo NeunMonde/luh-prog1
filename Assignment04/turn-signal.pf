@@ -13,6 +13,14 @@ set the initial state and implement the helper functions left-light-on? and
 right-light-on?.
 >#
 
+
+#<
+The blinker system may either be active or inactive.
+When active, the system has a side ("l" or "r"), a power state (true or false)
+and a timestamp which denotes the last time the power state was toggled.
+When inactive, the system has no fields.
+>#
+
 # chosen design recipe:
 Blinker: {
     Active: (side :Str, powered :Bool, LastTimestamp :Int)
@@ -189,3 +197,10 @@ animate: {
 # start the IDE again. Always save (Ctrl+S) your work!
 
 animate
+
+#<
+      ▄▀▄     ▄▀▄
+     ▄█░░▀▀▀▀▀░░█▄
+ ▄▄  █░░░░░░░░░░░█  ▄▄
+█▄▄█ █░░▀░░┬░░▀░░█ █▄▄█
+>#
