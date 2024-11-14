@@ -73,4 +73,283 @@ test-calculate-water: {
 }fun
 
 test-calculate-water
+
+generate-wall: (height :Int -> :Arr) {
+    0 0 array column-array!
+    height 12 > {12 height!} if
+    12 height - air-height!
+    0 air-height {
+        pop column-array [square: 20 "white"] append column-array!
+    } for
+    0 height {
+        pop column-array [square: 20 "darkgrey"] append column-array!
+    } for
+    column-array
+} fun
+
+test-generate-wall: {
+    12 0 array world!
+    0 generate-wall
+    [
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+    ]
+    test=
+
+    1 generate-wall
+    [
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "darkgrey"] 
+    ]
+    test=
+
+    12 generate-wall
+    [
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+    ]
+    test=
+
+    50 generate-wall
+    [
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+    ]
+    test=
+}fun
+
+test-generate-wall
+
+
+test-generate-wall: {
+    0 generate-wall
+    [
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+    ]
+    test=
+
+    1 generate-wall
+    [
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        [square: 20 "white"] [square: 20 "white"] [square: 20 "darkgrey"] 
+    ]
+    test=
+
+    12 generate-wall
+    [
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+    ]
+    test=
+
+    50 generate-wall
+    [
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+        [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+    ]
+    test=
+}fun
+
+generate-world: (world :Arr -> :Arr) {
+        0 0 array graphics-array!
+    world{
+        i! pop
+        graphics-array
+        world .i
+        generate-wall
+        append graphics-array!
+    } fori
+
+    [ :beside [
+        graphics-array{
+            i! pop
+            [ :above 
+            graphics-array .i
+            ]
+        } fori
+    ]]
+} fun
+
+test-generate-world: {
+    12 0 array world!
+
+    world 0 1 11 1 set-two-walls generate-world
+    [ :beside [
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "darkgrey"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "darkgrey"] 
+        ]]
+    ]]
+    test=
+
+world 3 12 7 11 set-two-walls generate-world
+    [ :beside [
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+            [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+            [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+            [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"]  
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+            [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+            [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"] 
+            [square: 20 "darkgrey"] [square: 20 "darkgrey"] [square: 20 "darkgrey"]  
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+        [ :above [
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+            [square: 20 "white"] [square: 20 "white"] [square: 20 "white"] 
+        ]]
+    ]]
+    test=
+
+} fun
+
+test-generate-world
+
 test-stats
+
+12 0 array world!
+world 5 8 9 5 set-two-walls generate-world
+show-image
