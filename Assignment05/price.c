@@ -65,6 +65,8 @@ static void price_test () {
     test_equal_i(price(5),1000);
     test_equal_i(price(10),1400);
     test_equal_i(price(22),2480);
+    test_equal_i(price(50),3750);
+    test_equal_i(price(100),7500);
 }
 
 int main(void) {
