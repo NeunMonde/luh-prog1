@@ -20,6 +20,12 @@ const int NO_SHIPPING_THRESHOLD = 2000;
 
 
 // write function price
+/*
+This function calculates the total price based on the quantity of items being bought. 
+The function will also remove shipping costs if the total price is above a certain threshold.
+@param Quantity of the item (Int)
+@return Total Price (Int)
+*/
 int price (int itemQuantity) {
     // Possibility of creating a helper function to add shipping cost instead of calling the function in every case
     int priceTotal;
