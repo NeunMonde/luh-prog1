@@ -7,7 +7,12 @@
 #include "base.h"
 
 String characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-//todo: write purpose statement inclusive @param and @return
+/*
+    This function calculates the amount of digits needed to represent a number in a certain base.
+    @param number Number to be displayed in a certain base
+    @param base Base in which the number is to be displayed
+    @return Number of digits needed to represent the number in the target base
+*/
 int length_for_base(int number, int base){
     if(number == 0)
         return 1;
@@ -24,7 +29,6 @@ int length_for_base(int number, int base){
 String get_string_for_number_and_base(int number, int base){
     int length = length_for_base(number, base);
     String s = xcalloc(sizeof(char), length + 1);
-    //printf("length: %d\n", length);
     for(int i = 0; i< length; i++){
         s[i] = '#';
     }
@@ -38,11 +42,18 @@ String get_string_for_number_and_base(int number, int base){
     @return String der die Zahl in der Zielbasis enthaelt.
 */
 String convert_to_base(int number, int base){
+    if (base < 2 || base > 36) {
+        return "Error: Base must be between 2 and 36";
+    }
+
     int len = length_for_base(number, base);
     String s = get_string_for_number_and_base(number, base);
-	//s_set(s, 0, 'H');
-	char c = s_get(characters, 12);
-	s_set(s, 0, c);
+    for (int i = len - 1; i >= 0; i--) {
+        int rest = number % base;
+        char c = s_get(characters, rest);
+        s_set(s, i, c);
+        number = number / base;
+    }
     return s;
 }
 
@@ -85,6 +96,9 @@ void test_convert_to_base(){
     
     print_convert(1300300300, 36);
     test_equal_s(convert_to_base(1300300300, 36), "LI5Y4S");
+
+    test_equal_s(convert_to_base(10, 37), "Error: Base must be between 2 and 36");
+    test_equal_s(convert_to_base(10, 1), "Error: Base must be between 2 and 36");
 }
 
 
