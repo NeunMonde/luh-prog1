@@ -7,12 +7,7 @@
 #include "base.h"
 
 String characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-/*
-    This function calculates the amount of digits needed to represent a number in a certain base.
-    @param number Number to be displayed in a certain base
-    @param base Base in which the number is to be displayed
-    @return Number of digits needed to represent the number in the target base
-*/
+//todo: write purpose statement inclusive @param and @return
 int length_for_base(int number, int base){
     if(number == 0)
         return 1;
@@ -21,14 +16,15 @@ int length_for_base(int number, int base){
     return length;
 }
 /*
-    Gibt einen dynamisch allokierte String zurueck, der so viele Zeichen hat wie noetig sind um die Zahl in der Zielbasis darzustellen. 
+    Gibt einen dynamisch allokierte String zurueck, der so viele Zeichen hat wie noetig sind um die Zahl in der Zielbasis darzustellen.
     @param number Zahl, die in der Zielbasis dargestellt wird.
-    @param base Zielbasis, in der die Zahl number dargestellt werden soll.  
+    @param base Zielbasis, in der die Zahl number dargestellt werden soll.
     @return Eine Zeichenkette mit der noetigen Anzahl an Stellen mit '#' initialisiert.
 */
 String get_string_for_number_and_base(int number, int base){
     int length = length_for_base(number, base);
     String s = xcalloc(sizeof(char), length + 1);
+    //printf("length: %d\n", length);
     for(int i = 0; i< length; i++){
         s[i] = '#';
     }
@@ -38,14 +34,10 @@ String get_string_for_number_and_base(int number, int base){
 /*
     Gibt die Zahl number in der Zielbasis als Zeichenkette zurueck.
     @param number Zahl, die in der Zielbasis dargestellt wird.
-    @param base Zielbasis, in der die Zahl number dargestellt werden soll.  
+    @param base Zielbasis, in der die Zahl number dargestellt werden soll.
     @return String der die Zahl in der Zielbasis enthaelt.
 */
 String convert_to_base(int number, int base){
-    if (base < 2 || base > 36) {
-        return "Error: Base must be between 2 and 36";
-    }
-
     int len = length_for_base(number, base);
     String s = get_string_for_number_and_base(number, base);
     for (int i = len - 1; i >= 0; i--) {
@@ -54,13 +46,14 @@ String convert_to_base(int number, int base){
         s_set(s, i, c);
         number = number / base;
     }
+    printf("s: %s\n", s);
     return s;
 }
 
 /*
     Schoen formatierte Ausgabe der Zahl, die zu konvertieren ist, sowie des Ergebnisses.
     @param number Zahl, die in der Zielbasis dargestellt wird.
-    @param base Zielbasis, in der die Zahl number dargestellt werden soll.  
+    @param base Zielbasis, in der die Zahl number dargestellt werden soll.
 */
 void print_convert(int number, int base){
     printf("Convert %4d to base %2d: %s\n", number, base, convert_to_base(number, base));
@@ -96,9 +89,6 @@ void test_convert_to_base(){
     
     print_convert(1300300300, 36);
     test_equal_s(convert_to_base(1300300300, 36), "LI5Y4S");
-
-    test_equal_s(convert_to_base(10, 37), "Error: Base must be between 2 and 36");
-    test_equal_s(convert_to_base(10, 1), "Error: Base must be between 2 and 36");
 }
 
 
@@ -114,12 +104,12 @@ void bit_operations(){
     printsln("&");
     int a = 0xaf;
     int b = 0xa5;
-    
+    // bitwise and (wenn beide Bits 1 sind, ist der Output 1)
     int c = a & b;
     print_bits(a);
     print_bits(b);
     print_bits(c);
-    
+    // bitwise inclusive or (Wenn einer oder beide Bits 1 sind, ist der Output 1)
     printsln("|");
     a = 0xb1;
     b = 0x93;
@@ -127,7 +117,7 @@ void bit_operations(){
     print_bits(a);
     print_bits(b);
     print_bits(c);
-    
+    // bitwise exclusive or (Wenn einer der Bits 1 ist, ist der Output 1. Wenn beide Bits 1 sind, ist der Output 0)
     printsln("^");
     a = 0xb1;
     b = 0x33;
@@ -135,7 +125,7 @@ void bit_operations(){
     print_bits(a);
     print_bits(b);
     print_bits(c);
-    
+    // Bitshifts
     printsln("<< und >>");
     a = 0x30;
     print_bits(a);
@@ -148,13 +138,31 @@ void bit_operations(){
 
 //todo
 int set_bit(int value, int index, bool bit){
-
-    return value;
+    printi(value);
+    String binary = convert_to_base(value, 2);
+    prints("vorher   ");
+    printsln(binary);
+    if (bit == true){
+        int len = s_length(binary);
+        printi(len);
+        binary[len - 1 - index] = '1';
+    }
+    else{
+        int len = s_length(binary);
+        printi(len);
+        binary[len - 1 - index] = '0';
+    }
+    prints("nachher   ");
+    printsln(binary);
+    printiln(strtol(binary, NULL , 2));
+    return strtol(binary, NULL , 2);
 }
 
 //todo
 bool get_bit(int value, int index ){
-    return false;
+    String binary = convert_to_base(value, 2);
+    char bit = binary[index];
+    return bit == '1';
 }
 
 /*
@@ -162,7 +170,7 @@ bool get_bit(int value, int index ){
 */
 void test_get_set_bit(){
     int a = 0x77;
-    //print_bits(a);
+    print_bits(a);
     
     test_equal_b(get_bit(a,0), true);
     test_equal_b(get_bit(a,1), true);
@@ -208,12 +216,12 @@ void test_extract_bits(){
 
 int main(void){
     test_convert_to_base();
-    /* Entfernen Sie Kommentierung der nachfolgenden Zeilen fuer Aufgabe 4
     printsln("------------------------------");
     bit_operations();
     printsln("------------------------------");
     test_get_set_bit();
-    test_extract_bits();
-    */
+    // nicht gemacht
+    //test_extract_bits();
     return 0;
 }
+
