@@ -4,6 +4,10 @@
 #define M_PI 3.141592653589793
 #endif
 
+/*
+Die enum TypTag definiert die Körper, die dargestellt werden können und bietet eine Möglichkeit, diese zu unterscheiden.
+*/
+
 typedef enum typetag_e {
     CYLINDER,
     CUBOID,
@@ -23,24 +27,60 @@ typedef struct sphere_s {
 } Sphere;
 
 typedef struct body_s {
-    // todo
+    enum typetag_e tag;
+    union {
+        Cylinder cylinder;
+        Cuboid cuboid;
+        Sphere sphere;
+    };
 } Body;
 
 Body make_cylinder(double r, double h) {
-    // todo
+    if (r < 0 || h < 0) {
+        fprintf(stderr, "make_cylinder: invalid input\n");
+        exit(1);
+    }
+    struct body_s body;
+    body.tag = CYLINDER;
+    body.cylinder.r = r;
+    body.cylinder.h = h;
+    return body;
 }
 
 Body make_cuboid(double a, double b, double c) {
-    // todo
+    if (a < 0 || b < 0 || c < 0) {
+        fprintf(stderr, "make_cubiod: invalid input\n");
+        exit(1);
+    }
+    struct body_s body;
+    body.tag = CUBOID;
+    body.cuboid.a = a;
+    body.cuboid.b = b;
+    body.cuboid.c = c;
+    return body;
 }
 
 Body make_sphere(double r) {
-    // todo
+    if (r < 0) {
+        fprintf(stderr, "make_sphere: invalid input\n");
+        exit(1);
+    }
+    struct body_s body;
+    body.tag = SPHERE;
+    body.sphere.r = r;
+    return body;
 }
 
 double volume(Body body) {
-    // todo
-    return -1;
+    switch (body.tag) {
+        case CYLINDER:
+            return M_PI * body.cylinder.r * body.cylinder.r * body.cylinder.h;
+        case CUBOID:
+            return body.cuboid.a * body.cuboid.b * body.cuboid.c;
+        case SPHERE:
+            return (4.0 / 3.0) * M_PI * body.sphere.r * body.sphere.r * body.sphere.r;
+    }
+    return 0;
 }
 
 void volume_test(void) {
@@ -53,3 +93,4 @@ int main(void) {
     volume_test();
     return 0;
 }
+
