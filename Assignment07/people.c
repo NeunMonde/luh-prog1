@@ -70,8 +70,6 @@ Statistics compute_statistics(String table) {
     double Größe[] = {};
     String Name[] = {};
     
-    printiln(n);
-    
     while (s_get(table, i) != '\n') i++; // skip first row
     k = i + 1;
     while (i <= n) {
