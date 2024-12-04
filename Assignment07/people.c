@@ -71,7 +71,7 @@ Statistics compute_statistics(String table) {
     String Name[] = {};
     
     while (s_get(table, i) != '\n') i++; // skip first row
-    k = i + 1;
+    j = i + 1;
     while (i <= n) {
         if (s_get(table, i) != '\n') {
             if (s_get(table, i) == '\t') {
@@ -110,11 +110,11 @@ Statistics compute_statistics(String table) {
     for (i = 0; i <= Zeile; i++) {
         Jahr_gesamt = Jahr_gesamt + Jahr[i];
         Name_Länge = Name_Länge + s_length(Name[i]);
-        if (Geschlecht[i] == "m") {
+        if (Geschlecht[i] == 'm') {
             m_gesamt++;
             Größe_m = Größe_m + Größe[i];
         }
-        else if (Geschlecht[i] == "f") {
+        else if (Geschlecht[i] == 'f') {
             f_gesamt++;
             Größe_f = Größe_f + Größe[i];
         }
