@@ -65,82 +65,70 @@ Statistics compute_statistics(String table) {
     int k = 0;
     int Spalte = 0;
     int Zeile = 0;
-    int Jahr[] = {};
-    char Geschlecht[] = {};
-    double Größe[] = {};
-    String Name[] = {};
-    
-    printsln("test1");
+    char Geschlecht_in_Zeile = 'n';
+    int Jahr_gesamt = 0;
+    int Anzahl_m = 0;
+    int Anzahl_f = 0;
+    int Anzahl_d = 0;
+    double Größe_gesamt_m = 0.0;
+    double Größe_gesamt_f = 0.0;
+    double Größe_gesamt_d = 0.0;
+    int Namenlänge_gesamt = 0;
     
     while (s_get(table, i) != '\n') i++; // skip first row
     int test = i;
     j = i + 1;
-    for (int i = test; i <= n - 100; i++) {
+    for (int i = test; i < n; i++) {
         if (s_get(table, i) != '\n') {
             if (s_get(table, i) == '\t') {
                 k = i - 1;
                 if (Spalte == 0) {
-                    Jahr[Zeile] = i_of_s(s_sub(table, j, k));
+                    Jahr_gesamt = Jahr_gesamt + i_of_s(s_sub(table, j, k));
                 }
                 else if (Spalte == 1) {
-                    Geschlecht[Spalte] = s_get(table, k);
+                    if (s_get(table, k) == 'm') {
+                        Anzahl_m++;
+                        Geschlecht_in_Zeile = 'm';
+                    }
+                    else if (s_get(table, k) == 'f') {
+                        Anzahl_f++;
+                        Geschlecht_in_Zeile = 'f';
+                    }
+                    else {
+                        Anzahl_d++;
+                        Geschlecht_in_Zeile = 'd';
+                    }
                 }
                 else if (Spalte == 2) {
-                    Größe[Spalte] = d_of_s(s_sub(table, j, k));
+                    if (Geschlecht_in_Zeile == 'm') {
+                        Größe_gesamt_m = Größe_gesamt_m + d_of_s(s_sub(table, j, k));
+                    }
+                    else if (Geschlecht_in_Zeile == 'm') {
+                        Größe_gesamt_f = Größe_gesamt_f + d_of_s(s_sub(table, j, k));
+                    }
+                    else {
+                        Größe_gesamt_d = Größe_gesamt_d + d_of_s(s_sub(table, j, k));
+                    }
                 }
-                else if (Spalte == 3) {
-                    Name[Spalte] = s_sub(table, j, k);
-                }
-                j = i + 1;
-                Spalte++;
-                
+                Spalte ++;
             }
         }
         else {
+            k = i - 1;
+            Namenlänge_gesamt = Namenlänge_gesamt + s_length(s_sub(table, j, k));
             Spalte = 0;
             Zeile++;
         }
     }
     
-    printsln("test2");
-    
-    int Jahr_gesamt = 0;
-    int Name_Länge = 0;
-    int m_gesamt = 0;
-    int f_gesamt = 0;
-    int d_gesamt = 0;
-    int Größe_m = 0;
-    int Größe_f = 0;
-    int Größe_d = 0;
-    for (i = 0; i <= Zeile; i++) {
-        Jahr_gesamt = Jahr_gesamt + Jahr[i];
-        Name_Länge = Name_Länge + s_length(Name[i]);
-        if (Geschlecht[i] == 'm') {
-            m_gesamt++;
-            Größe_m = Größe_m + Größe[i];
-        }
-        else if (Geschlecht[i] == 'f') {
-            f_gesamt++;
-            Größe_f = Größe_f + Größe[i];
-        }
-        else {
-            d_gesamt++;
-            Größe_d = Größe_d + Größe[i];
-        }
-    }
-    
-    printsln("test3");
-    
-    /*
     ps.mean_year = round(Jahr_gesamt / Zeile);
-    ps.number_males = m_gesamt;
-    ps.number_females = f_gesamt;
-    ps.number_diverse = d_gesamt;
-    ps.mean_height_males = Größe_m / Zeile;
-    ps.mean_height_females = Größe_f / Zeile;
-    ps.mean_height_diverse = Größe_d / Zeile;
-    ps.mean_length_of_names = Name_Länge / Zeile;
-     */
+    ps.number_males = Anzahl_m;
+    ps.number_females = Anzahl_f;
+    ps.number_diverse = Anzahl_d;
+    ps.mean_height_males = Größe_gesamt_m / Anzahl_m;
+    ps.mean_height_females = Größe_gesamt_f / Anzahl_f;
+    ps.mean_height_diverse = Größe_gesamt_d / Anzahl_d;
+    ps.mean_length_of_names = Namenlänge_gesamt / Zeile;
     
     return ps;
 }
