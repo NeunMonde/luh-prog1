@@ -70,9 +70,12 @@ Statistics compute_statistics(String table) {
     double Größe[] = {};
     String Name[] = {};
     
+    printsln("test1");
+    
     while (s_get(table, i) != '\n') i++; // skip first row
+    int test = i;
     j = i + 1;
-    while (i <= n) {
+    for (int i = test; i <= n - 100; i++) {
         if (s_get(table, i) != '\n') {
             if (s_get(table, i) == '\t') {
                 k = i - 1;
@@ -89,15 +92,17 @@ Statistics compute_statistics(String table) {
                     Name[Spalte] = s_sub(table, j, k);
                 }
                 j = i + 1;
-                Spalte ++;
+                Spalte++;
                 
             }
         }
         else {
             Spalte = 0;
-            Zeile ++;
+            Zeile++;
         }
     }
+    
+    printsln("test2");
     
     int Jahr_gesamt = 0;
     int Name_Länge = 0;
@@ -124,6 +129,9 @@ Statistics compute_statistics(String table) {
         }
     }
     
+    printsln("test3");
+    
+    /*
     ps.mean_year = round(Jahr_gesamt / Zeile);
     ps.number_males = m_gesamt;
     ps.number_females = f_gesamt;
@@ -132,6 +140,7 @@ Statistics compute_statistics(String table) {
     ps.mean_height_females = Größe_f / Zeile;
     ps.mean_height_diverse = Größe_d / Zeile;
     ps.mean_length_of_names = Name_Länge / Zeile;
+     */
     
     return ps;
 }
