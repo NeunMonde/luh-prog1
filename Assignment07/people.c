@@ -73,7 +73,7 @@ Statistics compute_statistics(String table) {
     double Größe_gesamt_m = 0.0;
     double Größe_gesamt_f = 0.0;
     double Größe_gesamt_d = 0.0;
-    int Namenlänge_gesamt = 0;
+    double Namenlänge_gesamt = 0.0;
     
     while (s_get(table, i) != '\n') i++; // skip first row
     int test = i;
@@ -103,13 +103,14 @@ Statistics compute_statistics(String table) {
                     if (Geschlecht_in_Zeile == 'm') {
                         Größe_gesamt_m = Größe_gesamt_m + d_of_s(s_sub(table, j, k));
                     }
-                    else if (Geschlecht_in_Zeile == 'm') {
+                    else if (Geschlecht_in_Zeile == 'f') {
                         Größe_gesamt_f = Größe_gesamt_f + d_of_s(s_sub(table, j, k));
                     }
                     else {
                         Größe_gesamt_d = Größe_gesamt_d + d_of_s(s_sub(table, j, k));
                     }
                 }
+                j = i + 1;
                 Spalte ++;
             }
         }
@@ -117,6 +118,7 @@ Statistics compute_statistics(String table) {
             k = i - 1;
             Namenlänge_gesamt = Namenlänge_gesamt + s_length(s_sub(table, j, k));
             Spalte = 0;
+            j = i + 1;
             Zeile++;
         }
     }
