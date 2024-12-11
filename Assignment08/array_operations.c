@@ -7,22 +7,104 @@ typedef struct better_array_s {
 
 //todo: a)
 bool compare(int *array_a, int length_a, int *array_b, int length_b) {
-    return false;
+    if (length_a == length_b){
+        if (length_a >= 0) {
+            for (int i = 0; i < length_a; i++) {
+                if (array_a[i] == array_b[i]) {}
+                else {
+                    return false;
+                }
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+    return true;
 }
 
 //todo: b)
 int remove_negatives(int* array, int length) {
+    int j = 0;
+    for (int i = 0; i < length; i++) {
+        if (array[i] < 0) {
+            j++;
+            array[i] = array[i + j];
+            i--;
+            length--;
+        }
+        else {
+            array[i] = array[i + j];
+        }
+    }
     return length;
 }
 
 //todo: c)
 BetterArray intersect(int *array_a, int length_a, int* array_b, int length_b) {
-    return (BetterArray) {};
+    BetterArray Array;
+    int k = 0;
+    if (length_a <= length_b) {
+        for (int i = 0; i < length_a; i++) {
+            for (int j = 0; j < length_b; j++) {
+                if (array_a[i] == array_b[j]) {
+                    array_a[k] = array_a[i];
+                    k++;
+                }
+            }
+        }
+        Array.array = array_a;
+        Array.length = k;
+    }
+    else{
+        for (int i = 0; i < length_b; i++) {
+            for (int j = 0; j < length_a; j++) {
+                if (array_b[i] == array_a[j]) {
+                    array_b[k] = array_b[i];
+                    k++;
+                }
+            }
+        }
+        Array.array = array_b;
+        Array.length = k;
+    }
+    return Array;
 }
 
 //todo: d)
 void merge_sorted_arrays(int *array_a, int length_a, int* array_b, int length_b, int* result, int length_result) {
-
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    while (i < length_a && j < length_b) {
+        if (array_a[i] <= array_b[j]) {
+            result[k] = array_a[i];
+            k++;
+            i++;
+        }
+        else{
+            result[k] = array_b[j];
+            k++;
+            j++;
+        }
+    }
+    if (length_a > length_b) {
+        while (i < length_a) {
+            result[k] = array_a[i];
+            k++;
+            i++;
+        }
+    }
+    else {
+        while (j < length_b) {
+            result[k] = array_b[j];
+            k++;
+            j++;
+        }
+    }
 }
 
 void test_compare(){
@@ -182,3 +264,4 @@ int main(void) {
 
     return 0;
 }
+
