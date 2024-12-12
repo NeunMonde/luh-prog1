@@ -2,19 +2,50 @@
 
 int indentation(char * s) {
     require_not_null(s);
-    // todo
-    return -1;
+    int i = 0;
+    while (*s == ' ') {
+        s++;
+        i++;
+    }
+    if (*s == '\t') {
+        return -1;
+    }
+    else {
+        return i;
+    }
 }
 
 char * left_trim(char * s) {
     require_not_null(s);
-    // todo
+    while (*s == ' ') {
+        s++;
+    }
+    if (*s == '\t') {
+        return "";
+    }
+    
     return s;
 }
 
 char * extract_comment(char * s) {
     require_not_null(s);
-    // todo
+    int length = s_length(s);
+    for (int i = 0; i < length; i++) {
+        if (*s == '/') {
+            s++;
+            if (*s == '/') {
+                s++;
+                break;
+            }
+        }
+        s++;
+        if (i >= length - 1) {
+            return "";
+        }
+    }
+    while (*s == ' ') {
+        s++;
+    }
     return s;
 }
 
@@ -69,3 +100,5 @@ int main(void) {
     extract_comment_test();
     return 0;
 }
+
+
