@@ -1,3 +1,11 @@
+
+/*
+e)
+ Durch die Struktur "BetterArray" wird zusätzlich zum Array selber dessen Länge gespeichert. Dadurch lässt sich das Array relativ einfach und mit wenigen Schritten verändern oder auswerten.
+ Strings werden in C durch Arrays von Zeichen (Chars) repräsentiert. Durch Sonderzeichen wird das Ende des Strings makiert. Daher wird die Länge des Strings nicht direkt gespeichert. Diese kann man durch das Zählen der Chars bis zum Sonderzeichen erhalten.
+ Bei int [] gibt es kein Sonderzeichen, was das Ende makiert. Daher muss die Information über die Länge seperat gespeichert werden.
+*/
+
 #include "base.h"
 
 typedef struct better_array_s {
@@ -10,8 +18,7 @@ bool compare(int *array_a, int length_a, int *array_b, int length_b) {
     if (length_a == length_b){
         if (length_a >= 0) {
             for (int i = 0; i < length_a; i++) {
-                if (array_a[i] == array_b[i]) {}
-                else {
+                if (array_a[i] != array_b[i]) {
                     return false;
                 }
             }
@@ -264,4 +271,6 @@ int main(void) {
 
     return 0;
 }
+
+
 
