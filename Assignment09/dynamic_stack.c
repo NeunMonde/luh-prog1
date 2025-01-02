@@ -1,24 +1,44 @@
 #include "base.h"
 
 typedef struct dynamic_stack_s {
-    // todo
+
+    int size;
+    int value[];
+
 } DynamicStack;
 
 DynamicStack * stack_new() {
-    // todo
-    return NULL;
+    
+    DynamicStack * stack = xcalloc(1, sizeof(DynamicStack));
+
+    return stack;
 }
 
 void stack_free(DynamicStack * stack) {
-    // todo
+
+    free(stack);
+
 }
 
 void stack_push(DynamicStack * stack, int value) {
-    // todo
+    
+    stack->value[stack->size] = value;
+    stack = realloc(stack, sizeof(DynamicStack) + sizeof(int) * (stack->size + 1));
+    stack->size++;
+
 }
 
 int stack_pop(DynamicStack * stack) {
-    // todo
+    
+    if (stack->size == 0) {
+        return 0;
+    }
+    else {
+        int value = stack->value[stack->size - 1];
+        stack = realloc(stack, sizeof(DynamicStack) + sizeof(int) * (stack->size - 1));
+        stack->size--;
+        return value;
+    }
     return 0;
 }
 
@@ -41,6 +61,8 @@ void test_stack_ops(DynamicStack * stack) {
 }
 
 int main(void) {
+    report_memory_leaks(true);
+    
     DynamicStack * stack = stack_new();
     test_stack_ops(stack);
 
