@@ -2,7 +2,7 @@
 
 typedef struct dynamic_stack_s {
 
-    int size;
+    int length;
     int value[];
 
 } DynamicStack;
@@ -22,21 +22,21 @@ void stack_free(DynamicStack * stack) {
 
 void stack_push(DynamicStack * stack, int value) {
     
-    stack->value[stack->size] = value;
-    stack = realloc(stack, sizeof(DynamicStack) + sizeof(int) * (stack->size + 1));
-    stack->size++;
+    stack->value[stack->length] = value;
+    stack = realloc(stack, sizeof(DynamicStack) + sizeof(int) * (stack->length + 1));
+    stack->length++;
 
 }
 
 int stack_pop(DynamicStack * stack) {
     
-    if (stack->size == 0) {
+    if (stack->length == 0) {
         return 0;
     }
     else {
-        int value = stack->value[stack->size - 1];
-        stack = realloc(stack, sizeof(DynamicStack) + sizeof(int) * (stack->size - 1));
-        stack->size--;
+        int value = stack->value[stack->length - 1];
+        stack = realloc(stack, sizeof(DynamicStack) + sizeof(int) * (stack->length - 1));
+        stack->length--;
         return value;
     }
     return 0;

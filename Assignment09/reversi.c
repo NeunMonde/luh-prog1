@@ -44,7 +44,7 @@ PositionStack make_position_stack() {
 
 // Pushes a new position on top of the stack.
 void push(PositionStack *ps, Position p) {
-    // todo: implement
+    
     if (ps->length >= POSITION_STACK_SIZE) {
         fprintf(stderr, "Stack overflow!\n");
         exit(0);
@@ -54,7 +54,7 @@ void push(PositionStack *ps, Position p) {
 
 // Pops the topmost position from the stack.
 Position pop(PositionStack *ps) {
-    // todo: implement
+
     if (ps->length <= 0) {
         fprintf(stderr, "Stack empty!\n");
         exit(0);
@@ -178,7 +178,7 @@ void reverse(Game* g, int x, int y) {
 Position human_move(Game* g) {
     String s = s_input(10);
     if (s_length(s) >= 1 && s[0] == 'q') exit(0);
-    // todo: modify to temporarily mark valid moves
+
     Position pos = { -1, -1 };
     if (s_length(s) >= 2) {
         pos.x = (int)tolower(s[0]) - 'a';
@@ -207,14 +207,31 @@ int count_stones(Game *g, char c) {
 
 // Returns a random position from the stack.
 Position random_position(PositionStack *ps) {
-    // todo: implement
-    return make_position(0, 0);
+
+    int random = i_rnd(ps->length);
+    return ps->values[random];
+
 }
 
 // Tests all positions and chooses a random valid move.
 Position computer_move(Game *g) {
-    // todo: implement
-    return make_position(0, 0);
+
+    PositionStack ps = make_position_stack();
+    for (int y = 0; y < N; y++) {
+        for (int x = 0; x < N; x++) {
+            if (legal(g, x, y)) {
+                push(&ps, make_position(x, y));
+            }
+        }
+    }
+    if (ps.length > 0) {
+        return random_position(&ps);
+    }
+    else {
+        fprintf(stderr, "No legal move possible!\n");
+        exit(0);
+    }
+
 }
 
 int main(void) {
