@@ -319,10 +319,10 @@ void evaluate_puzzle(Puzzle* p) {
             finish_puzzle(p);
         }
     }
-    else if (index_list(p->right, "Wolf") != -1 && index_list(p->right, "Ziege") != -1 && index_list(p->right, "Kohl") != -1) {
+    if (index_list(p->right, "Wolf") != -1 && index_list(p->right, "Ziege") != -1 && index_list(p->right,"Kohl") != -1) {
         printsln("Gewonnen");
         finish_puzzle(p);
-        }
+    }
 }
 
 void play_puzzle(Puzzle* p) {
