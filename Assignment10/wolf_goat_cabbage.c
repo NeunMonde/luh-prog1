@@ -6,7 +6,7 @@ make wolf_goat_cabbage && ./wolf_goat_cabbage
 
 #include "base.h"
 
-// Represents a single list node. The value is dynamically allocated. The node 
+// Represents a single list node. The value is dynamically allocated. The node
 // is the owner of the value and has to free it when itself is released.
 struct Node {
     String value; // dynamically allocated string, release memory!
@@ -43,8 +43,14 @@ void println_list(Node* list) {
 
 // Free all nodes of the list, including the values it contains.
 void free_list(Node* list) {
-    // todo: implement (Aufgabe 1)
-    // (there will be memory leaks if this function is not yet implemented)
+    Node* current = list;
+    while (current != NULL) {
+        Node * next = current->next;
+        free(current->value);
+        free(current);
+        current = next;
+    }
+    
 }
 
 
@@ -98,16 +104,43 @@ void test_equal_lists_test(void) {
 
 // Checking whether two string lists are equal.
 bool test_equal_lists(int line, Node* list1, Node* list2) {
-    // todo: implement (Aufgabe 1)
-    return false;
+    int node_number = 0;
+    while (list1 != NULL && list2 != NULL) {
+        if (!s_equals(list1->value, list2->value)) {
+            printf("Line %d: The values at node %d differ: %s <-> %s.\n",line, node_number, list1->value, list2->value);
+            return false;
+        }
+        list1 = list1->next;
+        list2 = list2->next;
+        node_number++;
+    }
+    if (list1 == NULL && list2 == NULL) {
+        printf("Line %d: The Lists are equal.\n", line);
+        return true;
+    }
+    else if (list1 == NULL) {
+        printf("Line %d: list 1 is shorter than list2.\n",line);
+        return false;
+    }
+    else {
+        printf("Line %d: list 1 is longer than list2.\n",line);
+        return false;
+    }
 }
 
 int length_list(Node* list);
 
 // Example calls for length_list (below).
 void length_list_test(void) {
-    // todo: implement (Aufgabe 1)
-    // todo: at least 3 checks, with test_equal_i(actual, expected);
+    Node* list = NULL;
+    test_equal_i(length_list(list), 0);
+    free_list(list);
+    list = new_node("hello", NULL);
+    test_equal_i(length_list(list), 1);
+    free_list(list);
+    list = new_node("first", new_node("second", NULL));
+    test_equal_i(length_list(list), 2);
+    free_list(list);
 }
 
 // Number of elements of the list.
@@ -121,13 +154,31 @@ int index_list(Node* list, String s);
 
 // Example calls for index_list (below).
 void index_list_test(void) {
-    // todo: implement (Aufgabe 1)
-    // todo: at least 3 checks, with test_equal_i(actual, expected);
+    Node* list = NULL;
+    String string = "hello";
+    test_equal_i(index_list(list, string), -1);
+    free_list(list);
+    list = new_node("first", new_node("second", NULL));
+    string = "first";
+    test_equal_i(index_list(list, string), 0);
+    free_list(list);
+    list = new_node("first", new_node("second", NULL));
+    string = "second";
+    test_equal_i(index_list(list, string), 1);
+    free_list(list);
 }
 
 // Return index of s in list, or -1 if s is not in list.
 int index_list(Node* list, String s) {
-    // todo: implement (Aufgabe 1)
+    require_not_null(s);
+    int mode_number = 0;
+    while (list != NULL) {
+        if (s_equals(list->value, s)) {
+            return mode_number;
+        }
+        list = list->next;
+        mode_number++;
+    }
     return -1;
 }
 
@@ -140,19 +191,71 @@ Node* remove_list(Node* list, int index);
 
 // Example calls for remove_list (below).
 void remove_list_test(void) {
-    // todo: implement (Aufgabe 1)
-    // todo: at least 3 checks, with test_equal_lists(__LINE__, actual, expected);
+    Node* list1 = NULL;
+    Node* list2 = NULL;
+    test_equal_lists(__LINE__, remove_list(list1, 1), list2);
+    free_list(list1);
+    free_list(list2);
+    
+    list1 = new_node("first", new_node("second", new_node("third", NULL)));
+    list2 = new_node("first", new_node("third", NULL));
+    test_equal_lists(__LINE__, remove_list(list1, 1), list2);
+    free_list(list1);
+    free_list(list2);
+    
+    list1 = new_node("first", new_node("second", new_node("third", NULL)));
+    list2 = new_node("first", new_node("second", NULL));
+    test_equal_lists(__LINE__, remove_list(list1, 2), list2);
+    free_list(list1);
+    free_list(list2);
+    
+    list1 = new_node("first", new_node("second", new_node("third", NULL)));
+    list2 = new_node("first", new_node("second", new_node("third", NULL)));
+    print_list(remove_list(list1, 1));
+    test_equal_lists(__LINE__, remove_list(list1, 5), list2);
+    free_list(list1);
+    free_list(list2);
 }
 
 // Remove element at position index from list. The element at index has to be deleted.
 Node* remove_list(Node* list, int index) {
-    // todo: implement (Aufgabe 1)
+    require("valid index", index >= 0);
+    
+    int initial_length = length_list(list);
+    
+    if (index == 0) {
+        Node* new = list->next;
+        free(list->value);
+        free(list);
+        ensure_code(length_list(new) == initial_length - 1); // Postcondition
+        return new;
+    }
+
+    Node* current = list;
+    Node* previous = NULL;
+    int current_index = 0;
+
+    while (current != NULL && current_index < index) {
+        previous = current;
+        current = current->next;
+        current_index++;
+    }
+
+    if (current == NULL) {
+        return list;
+    }
+
+    previous->next = current->next;
+    free(current->value);
+    free(current);
+
+    ensure_code(length_list(list) == initial_length - 1); // Postcondition
     return list;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 
-// The boat may either be at the left or right river bank. 
+// The boat may either be at the left or right river bank.
 // We don't care for the transition (boat crossing the river).
 enum Position {
     LEFT, RIGHT
@@ -184,7 +287,7 @@ void print_puzzle(Puzzle* p) {
     if (p->position == RIGHT) prints("     ");
     print_list(p->boat);
     if (p->position == LEFT)  prints("     ");
-    println_list(p->right);  
+    println_list(p->right);
 }
 
 // Release memory and quit.
@@ -196,13 +299,132 @@ void finish_puzzle(Puzzle* p) {
 }
 
 void evaluate_puzzle(Puzzle* p) {
-    // todo: implement (Aufgabe 2)
+    if (p->position == RIGHT) {
+        if (index_list(p->left, "Wolf") != -1 && index_list(p->left, "Ziege") != -1) {
+            printsln("Wolf isst Ziege");
+            finish_puzzle(p);
+        }
+        if (index_list(p->left, "Ziege") != -1 && index_list(p->left, "Kohl") != -1) {
+            printsln("Ziege isst Kohl");
+            finish_puzzle(p);
+        }
+    }
+    else if (p->position == LEFT) {
+        if (index_list(p->right, "Wolf") != -1 && index_list(p->right, "Ziege") != -1) {
+            printsln("Wolf isst Ziege");
+            finish_puzzle(p);
+        }
+        if (index_list(p->right, "Ziege") != -1 && index_list(p->right, "Kohl") != -1) {
+            printsln("Ziege isst Kohl");
+            finish_puzzle(p);
+        }
+    }
+    else if (index_list(p->right, "Wolf") != -1 && index_list(p->right, "Ziege") != -1 && index_list(p->right, "Kohl") != -1) {
+        printsln("Gewonnen");
+        finish_puzzle(p);
+        }
 }
 
 void play_puzzle(Puzzle* p) {
-    // todo: implement (Aufgabe 2)
+    
     print_puzzle(p);
-    // ...
+    evaluate_puzzle(p);
+    
+    char *input_str = xmalloc(sizeof(s_input(1)));
+    char *input = xmalloc(sizeof(s_get(s_input(1), 0)));
+    input[0] = s_get(s_input(1), 0);
+    free(input_str);
+    
+    if (input[0] == 'l') {
+        p->position = LEFT;
+    }
+    if (input[0] == 'r') {
+        p->position = RIGHT;
+    }
+    if (input[0] == 'w') {
+        if (p->position == LEFT) {
+            if (index_list(p->left, "Wolf") != -1) {
+                if (length_list(p->boat) < 1) {
+                    p->boat = new_node("Wolf", p->boat);
+                    p->left = remove_list(p->left,index_list(p->left, "Wolf"));
+                }
+            }
+            else if (index_list(p->boat, "Wolf") != -1) {
+                p->left = new_node("Wolf", p->left);
+                p->boat = remove_list(p->boat, index_list(p->boat, "Wolf"));
+            }
+        }
+        else {
+            if (index_list(p->right, "Wolf") != -1) {
+                if (length_list(p->boat) < 1) {
+                    p->boat = new_node("Wolf", p->boat);
+                    p->right = remove_list(p->right,index_list(p->right, "Wolf"));
+                }
+            }
+            else if (index_list(p->boat, "Wolf") != -1) {
+                p->right = new_node("Wolf", p->right);
+                p->boat = remove_list(p->boat, index_list(p->boat, "Wolf"));
+            }
+        }
+    }
+    if (input[0] == 'z') {
+        if (p->position == LEFT) {
+            if (index_list(p->left, "Ziege") != -1) {
+                if (length_list(p->boat) < 1) {
+                    p->boat = new_node("Ziege", p->boat);
+                    p->left = remove_list(p->left,index_list(p->left, "Ziege"));
+                }
+            }
+            else if (index_list(p->boat, "Ziege") != -1) {
+                p->left = new_node("Ziege", p->left);
+                p->boat = remove_list(p->boat, index_list(p->boat, "Ziege"));
+            }
+        }
+        else {
+            if (index_list(p->right, "Ziege") != -1) {
+                if (length_list(p->boat) < 1) {
+                    p->boat = new_node("Ziege", p->boat);
+                    p->right = remove_list(p->right,index_list(p->right, "Ziege"));
+                }
+            }
+            else if (index_list(p->boat, "Ziege") != -1) {
+                p->right = new_node("Ziege", p->right);
+                p->boat = remove_list(p->boat, index_list(p->boat, "Ziege"));
+            }
+        }
+    }
+    if (input[0] == 'k') {
+        if (p->position == LEFT) {
+            if (index_list(p->left, "Kohl") != -1) {
+                if (length_list(p->boat) < 1) {
+                    p->boat = new_node("Kohl", p->boat);
+                    p->left = remove_list(p->left,index_list(p->left, "Kohl"));
+                }
+            }
+            else if (index_list(p->boat, "Kohl") != -1) {
+                p->left = new_node("Kohl", p->left);
+                p->boat = remove_list(p->boat, index_list(p->boat, "Kohl"));
+            }
+        }
+        else {
+            if (index_list(p->right, "Kohl") != -1) {
+                if (length_list(p->boat) < 1) {
+                    p->boat = new_node("Kohl", p->boat);
+                    p->right = remove_list(p->right,index_list(p->right, "Kohl"));
+                }
+            }
+            else if (index_list(p->boat, "Kohl") != -1) {
+                p->right = new_node("Kohl", p->right);
+                p->boat = remove_list(p->boat, index_list(p->boat, "Kohl"));
+            }
+        }
+    }
+    if (input[0] == 'q') {
+        free(input);
+        finish_puzzle(p);
+    }
+    free(input);
+    play_puzzle(p);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -215,7 +437,11 @@ int main(void) {
     index_list_test();
     remove_list_test();
     
-    // Puzzle p = make_puzzle();
-    // play_puzzle(&p);
+    Puzzle p = make_puzzle();
+    play_puzzle(&p);
     return 0;
 }
+
+
+
+
