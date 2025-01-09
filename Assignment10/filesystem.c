@@ -49,7 +49,7 @@ Node* new_node(char* name) {
 }
 
 Node* new_file(char* name) {
-    // todo: implement (a)
+
     Node* file_node = new_node(name);
     file_node->type = NT_FILE;
     file_node->file.contents = NULL;
@@ -58,7 +58,7 @@ Node* new_file(char* name) {
 }
 
 Node* new_directory(char* name) {
-    // todo: implement (a)
+
     Node* dir_node = new_node(name);
     dir_node->type = NT_DIR;
     dir_node->dir.entries = NULL;
@@ -72,7 +72,7 @@ void insert_into_directory(Node* directory, Node* new_node) {
     require_not_null(new_node);
     require("target is a directory", directory->type == NT_DIR);
     require("name not empty", *new_node->name != '\0');
-    // todo: implement (b)
+
     if (directory->dir.entries == NULL) {
         directory->dir.entries = new_entry(new_node, NULL);
     } else {
@@ -118,14 +118,14 @@ void print_node(Node* node, char* prefix) {
 
 // Recursively frees the node.
 void free_node(Node* node) {
-    // todo: implement (c)
+
     switch(node->type) {
         case NT_FILE:
             if (node->file.contents != NULL) {
                 free(node->file.contents);
             }
             free(node);
-            // todo: delete references in entries
+            // Potential to delete all references to the node in entries if root is supplied to the function
             break;
         case NT_DIR:
             Entry* current = node->dir.entries;
