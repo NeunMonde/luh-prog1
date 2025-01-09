@@ -332,7 +332,6 @@ void play_puzzle(Puzzle* p) {
         
         String *input = xmalloc(sizeof(s_input(1)));
         input[0] = s_input(1);
-        printsln(input[0]);
         
         if (s_get(input[0],0) == 'l') {
             p->position = LEFT;
