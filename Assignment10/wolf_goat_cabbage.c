@@ -227,7 +227,7 @@ Node* remove_list(Node* list, int index) {
         Node* new = list->next;
         free(list->value);
         free(list);
-        ensure_code(length_list(new) == initial_length - 1);
+        ensure("same length", length_list(new) == initial_length - 1);
         return new;
     }
 
@@ -249,7 +249,7 @@ Node* remove_list(Node* list, int index) {
     free(current->value);
     free(current);
 
-    ensure_code(length_list(list) == initial_length - 1);
+    ensure("same length", length_list(list) == initial_length - 1);
     return list;
 }
 
@@ -299,6 +299,10 @@ void finish_puzzle(Puzzle* p) {
 }
 
 void evaluate_puzzle(Puzzle* p) {
+    if (index_list(p->right, "Wolf") != -1 && index_list(p->right, "Ziege") != -1 && index_list(p->right, "Kohl") != -1) {
+        printsln("Gewonnen");
+        finish_puzzle(p);
+        }
     if (p->position == RIGHT) {
         if (index_list(p->left, "Wolf") != -1 && index_list(p->left, "Ziege") != -1) {
             printsln("Wolf isst Ziege");
@@ -319,10 +323,6 @@ void evaluate_puzzle(Puzzle* p) {
             finish_puzzle(p);
         }
     }
-    else if (index_list(p->right, "Wolf") != -1 && index_list(p->right, "Ziege") != -1 && index_list(p->right, "Kohl") != -1) {
-        printsln("Gewonnen");
-        finish_puzzle(p);
-        }
 }
 
 void play_puzzle(Puzzle* p) {
