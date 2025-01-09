@@ -128,12 +128,12 @@ void free_node(Node* node) {
             // Potential to delete all references to the node in entries if root is supplied to the function
             break;
         case NT_DIR:
-            Entry* current = node->dir.entries;
-            while (current != NULL) {
-                Entry* next = current->next;
-                free_node(current->node);
-                free(current);
-                current = next;
+            Entry* current_entry = node->dir.entries;
+            while (current_entry != NULL) {
+                Entry* next_entry = current_entry->next;
+                free_node(current_entry->node);
+                free(current_entry);
+                current_entry = next_entry;
             }
             free(node);
             break;
