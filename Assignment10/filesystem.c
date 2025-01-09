@@ -50,23 +50,46 @@ Node* new_node(char* name) {
 
 Node* new_file(char* name) {
     // todo: implement (a)
-    return NULL;
+    Node* file_node = new_node(name);
+    file_node->type = NT_FILE;
+    file_node->file.contents = NULL;
+    file_node->file.length = 0;
+    return file_node;
 }
 
 Node* new_directory(char* name) {
     // todo: implement (a)
-    return NULL;
+    Node* dir_node = new_node(name);
+    dir_node->type = NT_DIR;
+    dir_node->dir.entries = NULL;
+    return dir_node;
 }
 
 // Inserts a new node into a directory.
 // Ensures that the list of nodes remains sorted by their names.
 void insert_into_directory(Node* directory, Node* new_node) {
-    return; // todo: remove
     require_not_null(directory);
     require_not_null(new_node);
     require("target is a directory", directory->type == NT_DIR);
     require("name not empty", *new_node->name != '\0');
     // todo: implement (b)
+    if (directory->dir.entries == NULL) {
+        directory->dir.entries = new_entry(new_node, NULL);
+    } else {
+        Entry* prev = NULL;
+        Entry* current = directory->dir.entries;
+        while (current != NULL && strcmp(current->node->name, new_node->name) < 0) {
+            prev = current;
+            current = current->next;
+        }
+        Entry* new_entry_node = new_entry(new_node, current);
+        if (prev == NULL) {
+            directory->dir.entries = new_entry_node;
+        } else {
+            prev->next = new_entry_node;
+        }
+    }
+
 }
 
 // Recursively prints the files and directories in a node.
@@ -96,6 +119,26 @@ void print_node(Node* node, char* prefix) {
 // Recursively frees the node.
 void free_node(Node* node) {
     // todo: implement (c)
+    switch(node->type) {
+        case NT_FILE:
+            if (node->file.contents != NULL) {
+                free(node->file.contents);
+            }
+            free(node);
+            // todo: delete references in entries
+            break;
+        case NT_DIR:
+            Entry* current = node->dir.entries;
+            while (current != NULL) {
+                Entry* next = current->next;
+                free_node(current->node);
+                free(current);
+                current = next;
+            }
+            free(node);
+            break;
+    }
+    
 }
 
 // Tries to find a node in the entries of a directory.
@@ -117,6 +160,7 @@ Node* find_entry_n(Node* directory, char* name, int n) {
     require("is directory", directory->type == NT_DIR);
     for (Entry* entry = directory->dir.entries; entry != NULL; entry = entry->next) {
         if (strncmp(entry->node->name, name, n) == 0) {
+            printf("found: %s -> ", entry->node->name); //remove
             return entry->node;
         }
     }
@@ -134,16 +178,34 @@ Node* find_node(Node* root, char* path) {
     if (*path == '\0') return root;
     // find path separator
     char* slash = strchr(path, '/');
+
     if (slash == NULL) {
-        // todo: implement (d)
-        return NULL;
+        return find_entry(root, path);
     } else {
-        // todo: implement (d)
-        return NULL;
+        Node* current = root;
+        while (current != NULL && *path != '\0') { // Null check needed?
+            char* next_slash = strchr(path, '/');
+            int n;
+            if (next_slash == NULL) {
+                current = find_entry(current, path); 
+                return current;
+            } else {
+                n = next_slash - path;
+                current = find_entry_n(current, path, n);
+                if (current == NULL || current->type == NT_FILE) {
+                    return NULL;
+                }
+                while (*(next_slash + 1) == '/') {
+                    next_slash++;
+                }
+                path = next_slash + 1;
+            }
+        }
+        return current;
     }
 }
 
-// Appends length bytes from buffer to file. Returns true iff the data could
+// Appends length bytes from buffer to file. Returns true if the data could
 // actually be written.
 bool write_file(Node* file, void* buffer, int length) {
     if (file == NULL || buffer == NULL || length <= 0) return true;
@@ -223,7 +285,9 @@ int main(void) {
     insert_into_directory(root, new_file("archive.a"));
 
     // output the filesystem's contents
+    printf("Filesystem:\n");
     print_node(root, "");
+    printf("Filesystem end.\n\n");
 
     // make sure we can extract the contained nodes again
     test_equal_b(find_node(root, "") == root, true);
