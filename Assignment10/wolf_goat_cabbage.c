@@ -227,7 +227,7 @@ Node* remove_list(Node* list, int index) {
         Node* new = list->next;
         free(list->value);
         free(list);
-        ensure_code(length_list(new) == initial_length - 1); // Postcondition
+        ensure_code(length_list(new) == initial_length - 1);
         return new;
     }
 
@@ -249,7 +249,7 @@ Node* remove_list(Node* list, int index) {
     free(current->value);
     free(current);
 
-    ensure_code(length_list(list) == initial_length - 1); // Postcondition
+    ensure_code(length_list(list) == initial_length - 1);
     return list;
 }
 
@@ -319,10 +319,10 @@ void evaluate_puzzle(Puzzle* p) {
             finish_puzzle(p);
         }
     }
-    if (index_list(p->right, "Wolf") != -1 && index_list(p->right, "Ziege") != -1 && index_list(p->right,"Kohl") != -1) {
+    else if (index_list(p->right, "Wolf") != -1 && index_list(p->right, "Ziege") != -1 && index_list(p->right, "Kohl") != -1) {
         printsln("Gewonnen");
         finish_puzzle(p);
-    }
+        }
 }
 
 void play_puzzle(Puzzle* p) {
@@ -330,18 +330,17 @@ void play_puzzle(Puzzle* p) {
     print_puzzle(p);
     evaluate_puzzle(p);
     
-    char *input_str = xmalloc(sizeof(s_input(1)));
-    char *input = xmalloc(sizeof(s_get(s_input(1), 0)));
-    input[0] = s_get(s_input(1), 0);
-    free(input_str);
+    String *input = xmalloc(sizeof(s_input(1)));
+    input[0] = s_input(1);
+    printsln(input[0]);
     
-    if (input[0] == 'l') {
+    if (s_get(input[0],0) == 'l') {
         p->position = LEFT;
     }
-    if (input[0] == 'r') {
+    if (s_get(input[0],0) == 'r') {
         p->position = RIGHT;
     }
-    if (input[0] == 'w') {
+    if (s_equals(input[0], "w")) {
         if (p->position == LEFT) {
             if (index_list(p->left, "Wolf") != -1) {
                 if (length_list(p->boat) < 1) {
@@ -367,7 +366,7 @@ void play_puzzle(Puzzle* p) {
             }
         }
     }
-    if (input[0] == 'z') {
+    if (s_get(input[0],0) == 'z') {
         if (p->position == LEFT) {
             if (index_list(p->left, "Ziege") != -1) {
                 if (length_list(p->boat) < 1) {
@@ -393,7 +392,7 @@ void play_puzzle(Puzzle* p) {
             }
         }
     }
-    if (input[0] == 'k') {
+    if (s_get(input[0],0) == 'k') {
         if (p->position == LEFT) {
             if (index_list(p->left, "Kohl") != -1) {
                 if (length_list(p->boat) < 1) {
@@ -419,10 +418,12 @@ void play_puzzle(Puzzle* p) {
             }
         }
     }
-    if (input[0] == 'q') {
+    if (s_get(input[0],0) == 'q') {
+        free(input[0]);
         free(input);
         finish_puzzle(p);
     }
+    free(input[0]);
     free(input);
     play_puzzle(p);
 }
@@ -441,6 +442,14 @@ int main(void) {
     play_puzzle(&p);
     return 0;
 }
+
+
+
+
+
+
+
+
 
 
 
