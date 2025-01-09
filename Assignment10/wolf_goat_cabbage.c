@@ -227,7 +227,7 @@ Node* remove_list(Node* list, int index) {
         Node* new = list->next;
         free(list->value);
         free(list);
-        ensure_code(length_list(new) == initial_length - 1); // Postcondition
+        ensure("same length", length_list(new) == initial_length - 1);
         return new;
     }
 
@@ -249,7 +249,7 @@ Node* remove_list(Node* list, int index) {
     free(current->value);
     free(current);
 
-    ensure_code(length_list(list) == initial_length - 1); // Postcondition
+    ensure("same length", length_list(list) == initial_length - 1);
     return list;
 }
 
@@ -299,6 +299,10 @@ void finish_puzzle(Puzzle* p) {
 }
 
 void evaluate_puzzle(Puzzle* p) {
+    if (index_list(p->right, "Wolf") != -1 && index_list(p->right, "Ziege") != -1 && index_list(p->right, "Kohl") != -1) {
+        printsln("Gewonnen");
+        finish_puzzle(p);
+        }
     if (p->position == RIGHT) {
         if (index_list(p->left, "Wolf") != -1 && index_list(p->left, "Ziege") != -1) {
             printsln("Wolf isst Ziege");
@@ -319,112 +323,108 @@ void evaluate_puzzle(Puzzle* p) {
             finish_puzzle(p);
         }
     }
-    if (index_list(p->right, "Wolf") != -1 && index_list(p->right, "Ziege") != -1 && index_list(p->right,"Kohl") != -1) {
-        printsln("Gewonnen");
-        finish_puzzle(p);
-    }
 }
 
 void play_puzzle(Puzzle* p) {
-    
-    print_puzzle(p);
-    evaluate_puzzle(p);
-    
-    char *input_str = xmalloc(sizeof(s_input(1)));
-    char *input = xmalloc(sizeof(s_get(s_input(1), 0)));
-    input[0] = s_get(s_input(1), 0);
-    free(input_str);
-    
-    if (input[0] == 'l') {
-        p->position = LEFT;
-    }
-    if (input[0] == 'r') {
-        p->position = RIGHT;
-    }
-    if (input[0] == 'w') {
-        if (p->position == LEFT) {
-            if (index_list(p->left, "Wolf") != -1) {
-                if (length_list(p->boat) < 1) {
-                    p->boat = new_node("Wolf", p->boat);
-                    p->left = remove_list(p->left,index_list(p->left, "Wolf"));
+    while (true) {
+        print_puzzle(p);
+        evaluate_puzzle(p);
+        
+        String *input = xmalloc(sizeof(s_input(1)));
+        input[0] = s_input(1);
+        
+        if (s_get(input[0],0) == 'l') {
+            p->position = LEFT;
+        }
+        if (s_get(input[0],0) == 'r') {
+            p->position = RIGHT;
+        }
+        if (s_equals(input[0], "w")) {
+            if (p->position == LEFT) {
+                if (index_list(p->left, "Wolf") != -1) {
+                    if (length_list(p->boat) < 1) {
+                        p->boat = new_node("Wolf", p->boat);
+                        p->left = remove_list(p->left,index_list(p->left, "Wolf"));
+                    }
+                }
+                else if (index_list(p->boat, "Wolf") != -1) {
+                    p->left = new_node("Wolf", p->left);
+                    p->boat = remove_list(p->boat, index_list(p->boat, "Wolf"));
                 }
             }
-            else if (index_list(p->boat, "Wolf") != -1) {
-                p->left = new_node("Wolf", p->left);
-                p->boat = remove_list(p->boat, index_list(p->boat, "Wolf"));
-            }
-        }
-        else {
-            if (index_list(p->right, "Wolf") != -1) {
-                if (length_list(p->boat) < 1) {
-                    p->boat = new_node("Wolf", p->boat);
-                    p->right = remove_list(p->right,index_list(p->right, "Wolf"));
+            else {
+                if (index_list(p->right, "Wolf") != -1) {
+                    if (length_list(p->boat) < 1) {
+                        p->boat = new_node("Wolf", p->boat);
+                        p->right = remove_list(p->right,index_list(p->right, "Wolf"));
+                    }
+                }
+                else if (index_list(p->boat, "Wolf") != -1) {
+                    p->right = new_node("Wolf", p->right);
+                    p->boat = remove_list(p->boat, index_list(p->boat, "Wolf"));
                 }
             }
-            else if (index_list(p->boat, "Wolf") != -1) {
-                p->right = new_node("Wolf", p->right);
-                p->boat = remove_list(p->boat, index_list(p->boat, "Wolf"));
-            }
         }
-    }
-    if (input[0] == 'z') {
-        if (p->position == LEFT) {
-            if (index_list(p->left, "Ziege") != -1) {
-                if (length_list(p->boat) < 1) {
-                    p->boat = new_node("Ziege", p->boat);
-                    p->left = remove_list(p->left,index_list(p->left, "Ziege"));
+        if (s_get(input[0],0) == 'z') {
+            if (p->position == LEFT) {
+                if (index_list(p->left, "Ziege") != -1) {
+                    if (length_list(p->boat) < 1) {
+                        p->boat = new_node("Ziege", p->boat);
+                        p->left = remove_list(p->left,index_list(p->left, "Ziege"));
+                    }
+                }
+                else if (index_list(p->boat, "Ziege") != -1) {
+                    p->left = new_node("Ziege", p->left);
+                    p->boat = remove_list(p->boat, index_list(p->boat, "Ziege"));
                 }
             }
-            else if (index_list(p->boat, "Ziege") != -1) {
-                p->left = new_node("Ziege", p->left);
-                p->boat = remove_list(p->boat, index_list(p->boat, "Ziege"));
-            }
-        }
-        else {
-            if (index_list(p->right, "Ziege") != -1) {
-                if (length_list(p->boat) < 1) {
-                    p->boat = new_node("Ziege", p->boat);
-                    p->right = remove_list(p->right,index_list(p->right, "Ziege"));
+            else {
+                if (index_list(p->right, "Ziege") != -1) {
+                    if (length_list(p->boat) < 1) {
+                        p->boat = new_node("Ziege", p->boat);
+                        p->right = remove_list(p->right,index_list(p->right, "Ziege"));
+                    }
+                }
+                else if (index_list(p->boat, "Ziege") != -1) {
+                    p->right = new_node("Ziege", p->right);
+                    p->boat = remove_list(p->boat, index_list(p->boat, "Ziege"));
                 }
             }
-            else if (index_list(p->boat, "Ziege") != -1) {
-                p->right = new_node("Ziege", p->right);
-                p->boat = remove_list(p->boat, index_list(p->boat, "Ziege"));
-            }
         }
-    }
-    if (input[0] == 'k') {
-        if (p->position == LEFT) {
-            if (index_list(p->left, "Kohl") != -1) {
-                if (length_list(p->boat) < 1) {
-                    p->boat = new_node("Kohl", p->boat);
-                    p->left = remove_list(p->left,index_list(p->left, "Kohl"));
+        if (s_get(input[0],0) == 'k') {
+            if (p->position == LEFT) {
+                if (index_list(p->left, "Kohl") != -1) {
+                    if (length_list(p->boat) < 1) {
+                        p->boat = new_node("Kohl", p->boat);
+                        p->left = remove_list(p->left,index_list(p->left, "Kohl"));
+                    }
+                }
+                else if (index_list(p->boat, "Kohl") != -1) {
+                    p->left = new_node("Kohl", p->left);
+                    p->boat = remove_list(p->boat, index_list(p->boat, "Kohl"));
                 }
             }
-            else if (index_list(p->boat, "Kohl") != -1) {
-                p->left = new_node("Kohl", p->left);
-                p->boat = remove_list(p->boat, index_list(p->boat, "Kohl"));
-            }
-        }
-        else {
-            if (index_list(p->right, "Kohl") != -1) {
-                if (length_list(p->boat) < 1) {
-                    p->boat = new_node("Kohl", p->boat);
-                    p->right = remove_list(p->right,index_list(p->right, "Kohl"));
+            else {
+                if (index_list(p->right, "Kohl") != -1) {
+                    if (length_list(p->boat) < 1) {
+                        p->boat = new_node("Kohl", p->boat);
+                        p->right = remove_list(p->right,index_list(p->right, "Kohl"));
+                    }
+                }
+                else if (index_list(p->boat, "Kohl") != -1) {
+                    p->right = new_node("Kohl", p->right);
+                    p->boat = remove_list(p->boat, index_list(p->boat, "Kohl"));
                 }
             }
-            else if (index_list(p->boat, "Kohl") != -1) {
-                p->right = new_node("Kohl", p->right);
-                p->boat = remove_list(p->boat, index_list(p->boat, "Kohl"));
-            }
         }
-    }
-    if (input[0] == 'q') {
+        if (s_get(input[0],0) == 'q') {
+            free(input[0]);
+            free(input);
+            finish_puzzle(p);
+        }
+        free(input[0]);
         free(input);
-        finish_puzzle(p);
     }
-    free(input);
-    play_puzzle(p);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -441,7 +441,4 @@ int main(void) {
     play_puzzle(&p);
     return 0;
 }
-
-
-
 
