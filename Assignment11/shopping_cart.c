@@ -32,8 +32,8 @@ Item * new_item(String name, Category cat, int price) {
 // Item * -> Item *
 // Create a copy of an Item.
 void * copy_item(void * x) {
-    // TODO: implement
-    return NULL;
+    Item * Item = x;
+    return new_item(Item->name, Item->cat, Item->price);
 }
 
 // Item* -> String
@@ -63,27 +63,33 @@ String item_to_string(void* x) {
 // Item * -> void
 // Releases memory of an Item.
 void free_item(void * x) {
-    // TODO
+    Item * item = (Item *) x;
+    free(item->name);
+    free(item);
 }
 
 // Item * -> bool
 // Returns true if the item is an electronic device.
 bool is_electronics(void* element, int i, void* x) {
-    return false;
+    Item * item = (Item *)element;
+    return item->cat == C_ELECTRONICS;
 }
 
 // Item * -> String
 // Maps an Item to its name.
 void* item_name(void* element, int i, void* x) {
-    return "";
+    Item * item = (Item *)element;
+    return item->name;
 }
 
 // Item * -> bool
 // Returns true if the price is less than *x.
 bool price_less_than(void* element, int i, void* x) {
-    // TODO: explain each line
+    // Definition von item als void* element
     Item * item = (Item *)element;
+    // Definition von a als void* x
     int a = *(int *)x;
+    // Vergleich zwischen item->price und a
     return item->price < a;
 }
 
@@ -110,11 +116,27 @@ int main(void) {
     }
 
     printsln("= first item cheaper than 10€ =");
-    // TODO: implement
-
- 
+    int price_limit = 1000;
+    Item *found_item2 = find_list(list, price_less_than, &price_limit);
+    if (found_item2 != NULL) {
+        String s = item_to_string(found_item2);
+        printsln(s);
+        free(s);
+    }
 
     free_list(list, free_item);
 
     return 0;
 }
+/*
+ e)
+ Der Vorteil von Zeigerlisten ist zum einen, dass man Elemente verschiedenen Datentyps speichern kann.
+ Zudem lassen sich Elemente an verschiedenen Positionen der Liste einfügen oder löschen.
+ Dazu lässt sich der Speicher für jedes Element verwalten, wodurch dieser Effizient genutzt werden kann.
+ 
+ Die Nutzung von verschiedenen Datentypen in der selben Liste kann durchaus Sinnvoll sein, um Daten
+ miteinander zu verknüpfen und diese dynamisch zu bearbeiten. Allerdings kann das Abrufen eines iten
+ Elements langsamer sein, als bei Arrays und die Speichergröße kann, gerade bei kleinen Speichergrößen
+ größer sein, als bei Arrays, bei unterschiedlich großen Datentypen kann eine Zeigerliste allerdings
+ effizienter sein.
+ */
