@@ -91,14 +91,14 @@ bool eos(char* s) {
 // Forwards s to the first non-whitespace character.
 char* skip_spaces(char* s) {
     require_not_null(s);
-    while (isspace(*s)) s++;
+    while (isspace((unsigned char) *s)) s++; // Edited to avoid warning
     return s;
 }
 
 // Forwards s to the first character after the word.
 char* skip_word(char* s) {
     require_not_null(s);
-    while (!eos(s) && !isspace(*s)) s++;
+    while (!eos(s) && !isspace((unsigned char) *s)) s++; // Edited to avoid warning
     return s;
 }
 
@@ -123,8 +123,20 @@ int count_words(char* s) {
 int split_words(/*in*/Str text, /*out*/Str* words, int words_length) {
     require_not_null(words);
     require("not negative", words_length >= 0);
-    // todo: implement
-    return 0;
+
+    int count = 0;
+    char* s = text.s;
+    while (count < words_length) {
+        char* word_start = skip_spaces(s);
+        char* word_end = skip_word(word_start);
+        int word_length = word_end - word_start;
+        if (count < words_length) {
+            words[count] = make_str(word_start, word_length);
+            count++;
+        }
+        s = word_end;
+    }
+    return count;
 }
 
 
@@ -138,7 +150,21 @@ void words_align_left(/*out*/Str* dst, /*in*/Str* words, int words_length, int w
     require_not_null(words);
     require("not negative", words_length >= 0);
     require("not negative", width >= 0);
-    // todo: implement
+
+    int current_line_length = 0;
+    for (int i = 0; i < words_length; i++) {
+        Str current_word = words[i];
+        if (current_line_length > 0 && current_line_length + current_word.len >= width) {
+            append_char(dst, '\n');
+            current_line_length = 0;
+        }
+        if (current_line_length > 0) {
+            append_char(dst, ' ');
+            current_line_length++;
+        }
+        append_str(dst, current_word);
+        current_line_length += current_word.len;
+    }
 }
 
 void print_bar(int width) {
