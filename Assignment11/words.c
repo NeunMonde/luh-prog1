@@ -43,6 +43,12 @@ void append_str(Str* str, Str t) {
     require_not_null(str);
     int n = str->len + t.len;
     panic_if_exit(n > str->cap, "overflow");
+    /*
+    Program panics and exits if the result would not fit into str.
+    This approach limits the scope of the code, since the size needs to be known beforehand
+    and the memory storage can not be expanded.
+    A better way would be to reallocate memory if the size is exceeded.
+    */ 
     memcpy(str->s + str->len, t.s, t.len);
     str->len = n;
 }
