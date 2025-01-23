@@ -73,8 +73,10 @@ void free_item(void * x) {
 // Item *, int, double * -> Item *
 // Creates a new Item with a reduced price. x is in range of [0, 1].
 void * reduce_price(void* element, int i, void* x){
-    // TODO: implement
-    return new_item("", 0, 0);
+    Item * item = (Item *)element;
+    double factor = *((double *)x);
+    int new_price = item->price * (1 - factor);
+    return new_item(item->name, item->cat, new_price);
 }
 
 typedef struct {
@@ -100,19 +102,28 @@ void item_stats(void* state, void* element, int index) {
 // int*, Item*, int -> void
 // Adds an Item's price to state.
 void add_prices(void* state, void* element, int index) {
-    // todo: explain each line
+    // Definition vom Integer sum als void* state
     int * sum = (int *)state;
+    // Definition von i als void* element
     Item * i = (Item *)element;
+    // Aufaddieren der Preise aller Elemente
     *sum += i->price;
 }
 
 // Item *, Item * -> { <0, 0, >0 }
 // Returns =0 if x and y are equal, <0 if x smaller than y, >0 otherwise.
 int cmp_item_price(void* x, void* y) {
-    // todo: implement
-    return 0;
+    Item * item_x = (Item *)x;
+    Item * item_y = (Item *)y;
+    return item_x->price - item_y->price;
 }
 
+bool price_less_than(void* element, int i, void* x) {
+    Item * item = (Item *)element;
+    int a = *(int *)x;
+    return item->price < a;
+}
+ 
 int main(void) {
     report_memory_leaks(true);
 
@@ -132,7 +143,10 @@ int main(void) {
     free_list(list2, free_item);
 
     printsln("= items less than 79€ =");
-    // TODO: implement
+    int price_limit = 7900;
+    Node * list3 = filter_list(list, price_less_than, &price_limit);
+    println_list(list3, item_to_string);
+    free_list(list3, NULL);
 
     printsln("= total price =");
     int total_price = 0;
@@ -164,3 +178,5 @@ int main(void) {
 
     return 0;
 }
+
+
